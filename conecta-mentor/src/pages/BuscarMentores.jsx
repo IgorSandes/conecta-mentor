@@ -1,4 +1,4 @@
-import '../css/buscarMentores.css';
+import '../Components/css/buscarMentores.css';
 import { useEffect, useState } from 'react';
 
 export function BuscarMentores() {

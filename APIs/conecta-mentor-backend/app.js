@@ -1,6 +1,7 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
 
+// Criação do app
 const app = express();
 
 // Middlewares globais
@@ -8,13 +9,16 @@ app.use(cors());
 app.use(express.json());
 
 // Importa rotas
-const autenticacaoRoutes = require('./rotas/autenticacao.js');
-const usuariosRoutes = require('./rotas/usuarios.js');
-const testeRoutes = require('./rotas/teste.js');
+import criarUsuarioRouters from './rotas/criarUsuario.js'
+import autenticacaoRoutes from './rotas/autenticacao.js';
+import usuariosRoutes from './rotas/usuarios.js';
+import testeRoutes from './rotas/teste.js';
 
 // Usa as rotas com prefixo /api
+app.use('/api', criarUsuarioRouters);
 app.use('/api', autenticacaoRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', testeRoutes);
 
-module.exports = app;
+// Exporta o app
+export default app;

@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import cors from 'cors';
 
+import criarUsuarioRouter from './rotas/criarUsuario.js';
 import autenticacaoRoutes from './rotas/autenticacao.js';
 import usuariosRoutes from './rotas/usuarios.js';
 import testeRoutes from './rotas/teste.js';
@@ -13,6 +14,7 @@ app.use(cors());
 app.use(express.json());
 
 // Usa as rotas com prefixo /api
+app.use('/api', criarUsuarioRouter);
 app.use('/api', autenticacaoRoutes);
 app.use('/api', usuariosRoutes);
 app.use('/api', testeRoutes);

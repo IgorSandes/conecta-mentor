@@ -1,7 +1,7 @@
 import { FaUser, FaLock } from 'react-icons/fa';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../css/login.css';
+import '../Components/css/login.css';
 
 export function Login() {
   const [username, setUsername] = useState('');
@@ -68,7 +68,7 @@ export function Login() {
           <button type="submit">Entrar</button>
 
           <div className="signup-link">
-            <p>Criar uma conta? <a href="#">Cadastrar</a></p>
+            <p>Criar uma conta? <a href="./cadastrar">Cadastrar</a></p>
           </div>
         </form>
       </div>
