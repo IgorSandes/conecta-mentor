@@ -1,9 +1,9 @@
-.cadastrar {
+.login {
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-image: url(../../assets/fundo-login.png);
+  background-image: url(../assets/fundo-login.png);
   background-size: cover;
   background-position: center;
 }
@@ -12,47 +12,25 @@
   width: 450px;
   background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  border: 2px solid rgba(255, 255, 255, 0.2); /* corrigido: "sold" -> "solid" */
   padding: 40px;
   border-radius: 10px;
 }
 
 .container h1 {
   text-align: center;
-  font-size: 28px;
+  font-size: 30px;
   color: #fff;
-  margin-bottom: 10px;
 }
 
-.error {
-  color: #ff6b6b;
-  background-color: rgba(255, 107, 107, 0.15);
-  padding: 10px;
-  margin: 15px 0;
-  border-radius: 8px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.success {
-  color: #4caf50;
-  background-color: rgba(76, 175, 80, 0.15);
-  padding: 10px;
-  margin: 15px 0;
-  border-radius: 8px;
-  font-weight: 600;
-  text-align: center;
-}
-
-.container .input-field {
+.inputField {
   position: relative;
   width: 100%;
   height: 50px;
-  margin: 25px auto;
+  margin: 30px auto;
 }
 
-/* Garantindo que todos os inputs (inclusive os novos) tenham background transparente e borda igual */
-.input-field input {
+.inputField input {
   width: 100%;
   height: 100%;
   background-color: transparent;
@@ -64,17 +42,43 @@
   padding: 20px 45px;
 }
 
-.input-field input::placeholder {
+.inputField input::placeholder {
   color: #fff;
 }
 
-.input-field .icon {
+.icon {
   position: absolute;
   right: 25px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px;
   color: #fff;
+}
+
+.recallForget {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14.5px;
+  margin: -15px 0 15px;
+}
+
+.recallForget label {
+  color: #fff;
+}
+
+.recallForget input {
+  margin-right: 5px;
+}
+
+.recallForget a,
+.signupLink p a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.recallForget a:hover,
+.signupLink p a:hover {
+  text-decoration: underline;
 }
 
 .container button {
@@ -90,7 +94,6 @@
   text-shadow: none;
   background-color: #fff;
   color: #000;
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container button:hover {
@@ -98,22 +101,13 @@
   color: #fff;
 }
 
-.container .signup-link {
+.signupLink {
   font-size: 15px;
   text-align: center;
   margin: 20px 0 10px;
 }
 
-.container .signup-link p {
+.signupLink p {
   text-shadow: none;
   font-weight: 600;
-}
-
-.container .signup-link p a {
-  color: #fff;
-  text-decoration: none;
-}
-
-.container .signup-link p a:hover {
-  text-decoration: underline;
 }

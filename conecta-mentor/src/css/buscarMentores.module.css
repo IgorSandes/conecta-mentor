@@ -6,7 +6,7 @@ body {
 }
 
 /* Layout principal */
-.app-container {
+.appContainer {
   display: flex;
   height: 100vh;
   overflow: hidden;
@@ -30,6 +30,7 @@ body {
 
 .menu {
   list-style: none;
+  padding-left: 0;
 }
 
 .menu li {
@@ -45,7 +46,7 @@ body {
 }
 
 /* Main content */
-.main-content {
+.mainContent {
   flex: 1;
   padding: 40px 48px;
   background-color: #f9f9f9;
@@ -66,7 +67,7 @@ body {
   color: #333;
 }
 
-.user-name {
+.userName {
   font-size: 16px;
   font-weight: 600;
   color: #007bff;
@@ -79,20 +80,20 @@ body {
 }
 
 /* Sessões */
-.session-box {
+.sessionBox {
   background-color: #ffffff;
   padding: 28px;
   border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
 }
 
-.session-box h2 {
+.sessionBox h2 {
   font-size: 22px;
   margin-bottom: 20px;
   color: #222;
 }
 
-.session-card {
+.sessionCard {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -100,29 +101,29 @@ body {
   border-bottom: 1px solid #eaeaea;
 }
 
-.session-card:last-child {
+.sessionCard:last-child {
   border-bottom: none;
 }
 
-.session-info strong {
+.sessionInfo strong {
   font-size: 16px;
   color: #222;
   margin-bottom: 4px;
   display: block;
 }
 
-.session-info p {
+.sessionInfo p {
   font-size: 14px;
   color: #666;
 }
 
-.session-date {
+.sessionDate {
   font-size: 14px;
   color: #888;
   white-space: nowrap;
 }
 
-.see-more {
+.seeMore {
   text-align: right;
   margin-top: 20px;
   font-size: 14px;
@@ -131,13 +132,13 @@ body {
   transition: color 0.2s ease;
 }
 
-.see-more:hover {
+.seeMore:hover {
   color: #0056b3;
 }
 
 /* Responsividade básica */
 @media (max-width: 768px) {
-  .app-container {
+  .appContainer {
     flex-direction: column;
   }
 
@@ -148,7 +149,7 @@ body {
     box-shadow: none;
   }
 
-  .main-content {
+  .mainContent {
     padding: 24px;
   }
 

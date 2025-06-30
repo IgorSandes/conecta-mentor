@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import styles from '../css/buscarMentores.module.css';
+import styles from '../css/mentorados.module.css';
 
-export function BuscarMentores() {
+export function Mentorados() {
   const [userName, setUserName] = useState('Usuário');
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export function BuscarMentores() {
 
       <main className={styles.mainContent}>
         <header className={styles.header}>
-          <h1>Painel do Mentor</h1>
+          <h1>Painel do Mentorado</h1>
           <span className={styles.userName}>{userName}</span>
           <p className={styles.welcome}>Bem-vindo, {userName}</p>
         </header>

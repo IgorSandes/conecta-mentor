@@ -18,8 +18,8 @@ router.post('/criarUsuario', async (req, res) => {
     conn = await getConnection();
 
     const sql = `
-      INSERT INTO usuarios (nome, email, senha_hash, role)
-      VALUES (:nome, :email, :senha_hash, 'jovem')
+      INSERT INTO usuarios (nome, email, senha_hash)
+      VALUES (:nome, :email, :senha_hash)
     `;
 
     await conn.execute(

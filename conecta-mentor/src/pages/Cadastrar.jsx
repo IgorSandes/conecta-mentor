@@ -1,6 +1,6 @@
 import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
 import { useState, useRef } from 'react';
-import '../Components/css/cadastrar.css';
+import styles from '../css/cadastrar.module.css';
 
 export function Cadastrar() {
   const [nome, setNome] = useState('');
@@ -9,7 +9,6 @@ export function Cadastrar() {
   const [confirmaSenha, setConfirmaSenha] = useState('');
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
-
   const emailRef = useRef();
 
   const handleCreateUser = async (event) => {
@@ -38,11 +37,9 @@ export function Cadastrar() {
         setSenha('');
         setConfirmaSenha('');
       } else {
-        // Verifica mensagens de erro do backend
         const mensagemErro = data.message || data.error || 'Erro ao criar usuário.';
         setErro(mensagemErro);
 
-        // Foco no campo de email se for erro de email
         if (mensagemErro.toLowerCase().includes('email')) {
           emailRef.current?.focus();
         }
@@ -54,15 +51,15 @@ export function Cadastrar() {
   };
 
   return (
-    <div className="cadastrar">
-      <div className="container">
+    <div className={styles.cadastrar}>
+      <div className={styles.container}>
         <form onSubmit={handleCreateUser}>
           <h1>Conecta Mentor - Cadastro</h1>
 
-          {erro && <p className="error">{erro}</p>}
-          {sucesso && <p className="success">{sucesso}</p>}
+          {erro && <p className={styles.error}>{erro}</p>}
+          {sucesso && <p className={styles.success}>{sucesso}</p>}
 
-          <div className="input-field">
+          <div className={styles.inputField}>
             <input
               type="text"
               placeholder="Nome"
@@ -70,10 +67,10 @@ export function Cadastrar() {
               onChange={(e) => setNome(e.target.value)}
               required
             />
-            <FaUser className="icon" />
+            <FaUser className={styles.icon} />
           </div>
 
-          <div className="input-field">
+          <div className={styles.inputField}>
             <input
               ref={emailRef}
               type="email"
@@ -82,10 +79,10 @@ export function Cadastrar() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <FaEnvelope className="icon" />
+            <FaEnvelope className={styles.icon} />
           </div>
 
-          <div className="input-field">
+          <div className={styles.inputField}>
             <input
               type="password"
               placeholder="Senha"
@@ -93,10 +90,10 @@ export function Cadastrar() {
               onChange={(e) => setSenha(e.target.value)}
               required
             />
-            <FaLock className="icon" />
+            <FaLock className={styles.icon} />
           </div>
 
-          <div className="input-field">
+          <div className={styles.inputField}>
             <input
               type="password"
               placeholder="Confirme a senha"
@@ -104,12 +101,12 @@ export function Cadastrar() {
               onChange={(e) => setConfirmaSenha(e.target.value)}
               required
             />
-            <FaLock className="icon" />
+            <FaLock className={styles.icon} />
           </div>
 
           <button type="submit">Cadastrar</button>
 
-          <div className="signup-link">
+          <div className={styles.signupLink}>
             <p>
               Já tem uma conta? <a href="/">Entrar</a>
             </p>

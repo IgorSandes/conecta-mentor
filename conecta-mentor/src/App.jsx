@@ -2,9 +2,11 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Login } from "./pages/Login.jsx";
 import { BuscarMentores } from "./pages/BuscarMentores.jsx";
+import { Mentorados } from "./pages/Mentorados.jsx";
 import { AgendarSessao } from "./pages/AgendarSessao.jsx";
 import { Chat } from "./pages/Chat.jsx";
 import {Cadastrar} from "./pages/Cadastrar.jsx"
+import {DefinirPerfil} from "./pages/DefinirPerfil.jsx"
 
 export default function App() {
   return (
@@ -12,7 +14,9 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/cadastrar" element={<Cadastrar />} />
+        <Route path="/definirperfil" element={<DefinirPerfil />} />
         <Route path="/buscarmentores" element={<BuscarMentores />} />
+        <Route path="/mentorados" element={<Mentorados />} />
         <Route path="/agendar/:id" element={<AgendarSessao />} />
         <Route path="/chat/:id" element={<Chat />} />
       </Routes>

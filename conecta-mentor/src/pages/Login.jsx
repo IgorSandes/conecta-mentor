@@ -1,7 +1,7 @@
 import { FaUser, FaLock } from 'react-icons/fa';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../Components/css/login.css';
+import styles from '../css/login.module.css';
 
 export function Login() {
   const [username, setUsername] = useState('');
@@ -22,7 +22,7 @@ export function Login() {
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
-        navigate('/buscarmentores');
+        navigate('/definirperfil');
       } else {
         alert('Erro no login: ' + data.message);
       }
@@ -33,11 +33,12 @@ export function Login() {
   };
 
   return (
-    <div className="login">
-      <div className="container">
+    <div className={styles.login}>
+      <div className={styles.container}>
         <form onSubmit={handleSubmit}>
           <h1>Conecta Mentor</h1>
-          <div className="input-field">
+
+          <div className={styles.inputField}>
             <input
               type="email"
               placeholder="E-mail"
@@ -45,9 +46,10 @@ export function Login() {
               value={username}
               required
             />
-            <FaUser className="icon" />
+            <FaUser className={styles.icon} />
           </div>
-          <div className="input-field">
+
+          <div className={styles.inputField}>
             <input
               type="password"
               placeholder="Senha"
@@ -55,9 +57,10 @@ export function Login() {
               value={password}
               required
             />
-            <FaLock className="icon" />
+            <FaLock className={styles.icon} />
           </div>
-          <div className="recall-forget">
+
+          <div className={styles.recallForget}>
             <label>
               <input type="checkbox" />
               Lembre de mim?
@@ -67,7 +70,7 @@ export function Login() {
 
           <button type="submit">Entrar</button>
 
-          <div className="signup-link">
+          <div className={styles.signupLink}>
             <p>Criar uma conta? <a href="./cadastrar">Cadastrar</a></p>
           </div>
         </form>

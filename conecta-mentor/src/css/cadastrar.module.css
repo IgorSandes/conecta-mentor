@@ -1,0 +1,118 @@
+.cadastrar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url(../assets/fundo-login.png);
+  background-size: cover;
+  background-position: center;
+}
+
+.container {
+  width: 450px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.container h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.error {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.15);
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.success {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.15);
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.inputField {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 25px auto;
+}
+
+.inputField input {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  outline: none;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 40px;
+  font-size: 16px;
+  color: #fff;
+  padding: 20px 45px;
+}
+
+.inputField input::placeholder {
+  color: #fff;
+}
+
+.icon {
+  position: absolute;
+  right: 25px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+}
+
+.container button {
+  width: 100%;
+  height: 50px;
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  text-shadow: none;
+  background-color: #fff;
+  color: #000;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container button:hover {
+  background-color: deepskyblue;
+  color: #fff;
+}
+
+.signupLink {
+  font-size: 15px;
+  text-align: center;
+  margin: 20px 0 10px;
+}
+
+.signupLink p {
+  text-shadow: none;
+  font-weight: 600;
+}
+
+.signupLink p a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.signupLink p a:hover {
+  text-decoration: underline;
+}

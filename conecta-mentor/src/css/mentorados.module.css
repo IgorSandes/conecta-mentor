@@ -1,0 +1,160 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f0f2f5;
+  color: #333;
+  line-height: 1.6;
+}
+
+/* Layout principal */
+.appContainer {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 250px;
+  background-color: #fff;
+  padding: 32px 24px;
+  border-right: 1px solid #ddd;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.03);
+}
+
+.logo {
+  font-weight: 700;
+  font-size: 20px;
+  color: #007bff;
+  margin-bottom: 40px;
+}
+
+.menu {
+  list-style: none;
+  padding-left: 0;
+}
+
+.menu li {
+  margin: 20px 0;
+  font-size: 16px;
+  color: #444;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.menu li:hover {
+  color: #007bff;
+}
+
+/* Main content */
+.mainContent {
+  flex: 1;
+  padding: 40px 48px;
+  background-color: #f9f9f9;
+  overflow-y: auto;
+}
+
+/* Header */
+.header {
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.header h1 {
+  font-size: 26px;
+  color: #333;
+}
+
+.userName {
+  font-size: 16px;
+  font-weight: 600;
+  color: #007bff;
+}
+
+.welcome {
+  font-size: 18px;
+  color: #666;
+  margin-top: 8px;
+}
+
+/* Sessões */
+.sessionBox {
+  background-color: #ffffff;
+  padding: 28px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+}
+
+.sessionBox h2 {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.sessionCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 0;
+  border-bottom: 1px solid #eaeaea;
+}
+
+.sessionCard:last-child {
+  border-bottom: none;
+}
+
+.sessionInfo strong {
+  font-size: 16px;
+  color: #222;
+  margin-bottom: 4px;
+  display: block;
+}
+
+.sessionInfo p {
+  font-size: 14px;
+  color: #666;
+}
+
+.sessionDate {
+  font-size: 14px;
+  color: #888;
+  white-space: nowrap;
+}
+
+.seeMore {
+  text-align: right;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #007bff;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.seeMore:hover {
+  color: #0056b3;
+}
+
+/* Responsividade básica */
+@media (max-width: 768px) {
+  .appContainer {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #ddd;
+    box-shadow: none;
+  }
+
+  .mainContent {
+    padding: 24px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

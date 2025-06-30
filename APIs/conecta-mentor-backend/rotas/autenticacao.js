@@ -19,7 +19,7 @@ router.post('/login', async (req, res) => {
     conn = await getConnection();
 
     const sql = `
-      SELECT id, email, nome, role, senha_hash
+      SELECT id, email, nome, senha_hash
       FROM usuarios
       WHERE LOWER(email) = LOWER(:email)
     `;
@@ -42,8 +42,7 @@ router.post('/login', async (req, res) => {
       {
         id: user.ID,
         email: user.EMAIL,
-        nome: user.NOME,
-        role: user.ROLE
+        nome: user.NOME
       },
       JWT_SECRET,
       { expiresIn: '2h' }
