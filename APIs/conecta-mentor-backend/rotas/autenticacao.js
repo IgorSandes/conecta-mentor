@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '2h' }
     );
 
-    return res.json({ success: true, token });
+    return res.json({ success: true, token, id: user.ID });
 
   } catch (err) {
     console.error('Erro no login:', err);

@@ -5,6 +5,7 @@ import cors from 'cors';
 import criarUsuarioRouter from './rotas/criarUsuario.js';
 import autenticacaoRoutes from './rotas/autenticacao.js';
 import usuariosRoutes from './rotas/usuarios.js';
+import definirPerfilRoutes from './rotas/definirPerfil.js';
 import testeRoutes from './rotas/teste.js';
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use('/api', criarUsuarioRouter);
 app.use('/api', autenticacaoRoutes);
 app.use('/api', usuariosRoutes);
+app.use('/api', definirPerfilRoutes);
 app.use('/api', testeRoutes);
 
 const PORT = process.env.PORT || 3000;

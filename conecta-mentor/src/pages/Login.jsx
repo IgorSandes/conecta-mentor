@@ -22,6 +22,7 @@ export function Login() {
 
       if (response.ok) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('id', data.id)
         navigate('/definirperfil');
       } else {
         alert('Erro no login: ' + data.message);

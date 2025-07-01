@@ -7,27 +7,51 @@ export function DefinirPerfil() {
   const [tipo, setTipo] = useState('');
   const [area, setArea] = useState('');
   const [texto, setTexto] = useState('');
+  const [mensagem, setMensagem] = useState({ tipo: '', texto: '' });
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!tipo) {
-      alert('Por favor, selecione um tipo de acesso.');
-      return;
+      return setMensagem({ tipo: 'erro', texto: 'Por favor, selecione um tipo de acesso.' });
     }
     if (!area) {
-      alert('Por favor, selecione a área.');
-      return;
+      return setMensagem({ tipo: 'erro', texto: 'Por favor, selecione a área.' });
     }
     if (!texto.trim()) {
-      alert('Por favor, preencha o campo de texto.');
-      return;
+      return setMensagem({ tipo: 'erro', texto: 'Por favor, preencha o campo de texto.' });
     }
 
-    // Aqui você pode fazer algo com os dados, ex: salvar no estado global, enviar para backend, etc.
-    // Por enquanto, vamos só navegar para a próxima página
-    navigate(tipo === 'mentor' ? '/buscarmentores' : '/mentorados', { state: { tipo, area, texto } });
+    const id = localStorage.getItem('id');
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await fetch('http://localhost:3000/api/definirperfil', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`, // Enviando token para autenticação
+        },
+        body: JSON.stringify({ id, tipo, area, texto }), // Sem idade
+      });
+
+      const data = await response.json();
+
+      if (response.ok && data.success) {
+        setMensagem({ tipo: 'sucesso', texto: 'Perfil definido com sucesso!' });
+        setTimeout(() => {
+          navigate(tipo === 'mentor' ? '/buscarmentores' : '/mentorados', {
+            state: { tipo, area, texto },
+          });
+        }, 1000);
+      } else {
+        setMensagem({ tipo: 'erro', texto: data.message || 'Erro ao definir o perfil.' });
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      setMensagem({ tipo: 'erro', texto: 'Erro na conexão com o servidor.' });
+    }
   };
 
   return (
@@ -42,6 +66,7 @@ export function DefinirPerfil() {
               setTipo('mentor');
               setArea('');
               setTexto('');
+              setMensagem({ tipo: '', texto: '' });
             }}
             type="button"
           >
@@ -53,6 +78,7 @@ export function DefinirPerfil() {
               setTipo('mentorado');
               setArea('');
               setTexto('');
+              setMensagem({ tipo: '', texto: '' });
             }}
             type="button"
           >
@@ -60,15 +86,24 @@ export function DefinirPerfil() {
           </button>
         </div>
 
+        {mensagem.texto && (
+          <div
+            className={
+              mensagem.tipo === 'erro' ? styles.mensagemErro : styles.mensagemSucesso
+            }
+          >
+            {mensagem.texto}
+          </div>
+        )}
+
         {tipo && (
           <div className={styles.caixaSelecionado}>
-            {tipo === 'mentor' && (
+            {tipo === 'mentor' ? (
               <>
                 <span>Mentor</span>
                 <FaChalkboardTeacher className={styles.icone} title="Mentor" />
               </>
-            )}
-            {tipo === 'mentorado' && (
+            ) : (
               <>
                 <span>Mentorado</span>
                 <FaUserGraduate className={styles.icone} title="Mentorado" />

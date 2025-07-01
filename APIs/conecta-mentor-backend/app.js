@@ -12,12 +12,14 @@ app.use(express.json());
 import criarUsuarioRouters from './rotas/criarUsuario.js'
 import autenticacaoRoutes from './rotas/autenticacao.js';
 import usuariosRoutes from './rotas/usuarios.js';
+import definirPerfilRoutesRoutes from './rotas/definirPerfil.js';
 import testeRoutes from './rotas/teste.js';
 
 // Usa as rotas com prefixo /api
 app.use('/api', criarUsuarioRouters);
 app.use('/api', autenticacaoRoutes);
 app.use('/api', usuariosRoutes);
+app.use('/api', definirPerfilRoutesRoutes);
 app.use('/api', testeRoutes);
 
 // Exporta o app
