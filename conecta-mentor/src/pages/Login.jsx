@@ -21,9 +21,9 @@ export function Login() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('id', data.id)
-        navigate('/definirperfil');
+        sessionStorage.setItem('token', data.token);
+        sessionStorage.setItem('id', data.id)
+        navigate('/selecionarperfil');
       } else {
         alert('Erro no login: ' + data.message);
       }
