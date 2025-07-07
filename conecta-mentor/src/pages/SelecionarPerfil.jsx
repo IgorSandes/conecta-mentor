@@ -11,9 +11,10 @@ export function SelecionarPerfil() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const navigate = useNavigate();
 
+  const id = localStorage.getItem('id');
+  const token = localStorage.getItem('token');
+
   const verificarPerfil = async (tipoSelecionado) => {
-    const id = sessionStorage.getItem('id');
-    const token = sessionStorage.getItem('token');
 
     try {
       const response = await fetch(`http://localhost:3000/api/verificarperfil`, {
@@ -48,9 +49,6 @@ export function SelecionarPerfil() {
     if (!area || !texto.trim()) {
       return setMensagem({ tipo: 'erro', texto: 'Preencha todos os campos.' });
     }
-
-    const id = sessionStorage.getItem('id');
-    const token = sessionStorage.getItem('token');
 
     try {
       const response = await fetch('http://localhost:3000/api/definirperfil', {

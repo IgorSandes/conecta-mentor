@@ -12,34 +12,37 @@
   width: 450px;
   background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.2); /* corrigido: "sold" -> "solid" */
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
   padding: 40px;
   border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .container h1 {
   text-align: center;
   font-size: 30px;
   color: #fff;
+  margin-bottom: 30px;
 }
 
 .inputField {
   position: relative;
   width: 100%;
-  height: 50px;
-  margin: 30px auto;
+  margin-bottom: 30px;
 }
 
 .inputField input {
   width: 100%;
-  height: 100%;
+  height: 50px;
+  padding: 0 45px 0 45px;
   background-color: transparent;
-  outline: none;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 40px;
-  font-size: 16px;
   color: #fff;
-  padding: 20px 45px;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
 }
 
 .inputField input::placeholder {
@@ -48,22 +51,43 @@
 
 .icon {
   position: absolute;
-  right: 25px;
+  left: 15px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px;
   color: #fff;
 }
 
+.iconLeft {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+}
+
+.iconRight {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+}
+
 .recallForget {
   display: flex;
   justify-content: space-between;
-  font-size: 14.5px;
-  margin: -15px 0 15px;
+  font-size: 14px;
+  margin: -15px 0 20px;
+  color: #fff;
 }
 
 .recallForget label {
-  color: #fff;
+  display: flex;
+  align-items: center;
 }
 
 .recallForget input {
@@ -71,13 +95,13 @@
 }
 
 .recallForget a,
-.signupLink p a {
+.signupLink a {
   color: #fff;
   text-decoration: none;
 }
 
 .recallForget a:hover,
-.signupLink p a:hover {
+.signupLink a:hover {
   text-decoration: underline;
 }
 
@@ -85,15 +109,13 @@
   width: 100%;
   height: 50px;
   border: none;
-  outline: none;
   border-radius: 40px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  text-shadow: none;
   background-color: #fff;
   color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 .container button:hover {
@@ -105,9 +127,9 @@
   font-size: 15px;
   text-align: center;
   margin: 20px 0 10px;
+  color: #fff;
 }
 
 .signupLink p {
-  text-shadow: none;
   font-weight: 600;
 }

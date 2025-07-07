@@ -1,8 +1,7 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = 'sua_chave_secreta'; // use a mesma chave do seu backend
+const JWT_SECRET = 'sua_chave_secreta';
 
-// Payload com dados mínimos, ajuste conforme seu sistema
 const payload = {
   id: 1,
   email: 'mentor@conecta.com',

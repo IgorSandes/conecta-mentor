@@ -5,7 +5,6 @@ import oracledb from 'oracledb';
 
 const router = Router();
 
-// Rota para verificar se o usuário já possui um perfil de mentor ou mentorado
 router.post('/verificarperfil', autenticador, async (req, res) => {
   const { tipo } = req.body;
   const idUsuario = req.usuario.id;
@@ -19,7 +18,7 @@ router.post('/verificarperfil', autenticador, async (req, res) => {
   try {
     conn = await getConnection();
 
-    let query, campo;
+    let query
 
     if (tipo === 'mentor') {
       query = `SELECT 1 FROM mentores WHERE id_mentor = :id`;

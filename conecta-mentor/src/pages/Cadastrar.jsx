@@ -1,4 +1,4 @@
-import { FaUser, FaLock, FaEnvelope } from 'react-icons/fa';
+import { FaUser, FaLock, FaEnvelope, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useState, useRef } from 'react';
 import styles from '../css/cadastrar.module.css';
 
@@ -9,6 +9,8 @@ export function Cadastrar() {
   const [confirmaSenha, setConfirmaSenha] = useState('');
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState('');
+  const [mostrarSenha, setMostrarSenha] = useState(false);
+  const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
   const emailRef = useRef();
 
   const handleCreateUser = async (event) => {
@@ -39,7 +41,6 @@ export function Cadastrar() {
       } else {
         const mensagemErro = data.message || data.error || 'Erro ao criar usuário.';
         setErro(mensagemErro);
-
         if (mensagemErro.toLowerCase().includes('email')) {
           emailRef.current?.focus();
         }
@@ -84,24 +85,38 @@ export function Cadastrar() {
 
           <div className={styles.inputField}>
             <input
-              type="password"
+              type={mostrarSenha ? 'text' : 'password'}
               placeholder="Senha"
               value={senha}
               onChange={(e) => setSenha(e.target.value)}
               required
             />
-            <FaLock className={styles.icon} />
+            <FaLock className={styles.iconLeft} />
+            <span onClick={() => setMostrarSenha(!mostrarSenha)}>
+              {mostrarSenha ? (
+                <FaEye className={styles.iconRight} />   
+              ) : (
+                <FaEyeSlash className={styles.iconRight} />
+              )}
+            </span>
           </div>
 
           <div className={styles.inputField}>
             <input
-              type="password"
+              type={mostrarConfirmacao ? 'text' : 'password'}
               placeholder="Confirme a senha"
               value={confirmaSenha}
               onChange={(e) => setConfirmaSenha(e.target.value)}
               required
             />
-            <FaLock className={styles.icon} />
+            <FaLock className={styles.iconLeft} />
+            <span onClick={() => setMostrarConfirmacao(!mostrarConfirmacao)}>
+              {mostrarConfirmacao ? (
+                <FaEye className={styles.iconRight} />
+              ) : (
+                <FaEyeSlash className={styles.iconRight} />
+              )}
+            </span>
           </div>
 
           <button type="submit">Cadastrar</button>

@@ -1,11 +1,12 @@
-import { FaUser, FaLock } from 'react-icons/fa';
+import { FaUser, FaLock, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../css/login.module.css';
 
 export function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [exibirSenha, setExibirSenha] = useState(false);
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -15,14 +16,14 @@ export function Login() {
       const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: JSON.stringify({ email, password })
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        sessionStorage.setItem('token', data.token);
-        sessionStorage.setItem('id', data.id)
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('id', data.id);
         navigate('/selecionarperfil');
       } else {
         alert('Erro no login: ' + data.message);
@@ -43,22 +44,32 @@ export function Login() {
             <input
               type="email"
               placeholder="E-mail"
-              onChange={(e) => setUsername(e.target.value)}
-              value={username}
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
               required
             />
             <FaUser className={styles.icon} />
           </div>
 
           <div className={styles.inputField}>
+            <FaLock className={styles.iconLeft} />
+
             <input
-              type="password"
+              type={exibirSenha ? 'text' : 'password'}
               placeholder="Senha"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               required
+              className={styles.input}
             />
-            <FaLock className={styles.icon} />
+
+            <span onClick={() => setExibirSenha(!exibirSenha)}>
+              {exibirSenha ? (
+                <FaEye className={styles.iconRight} />
+              ) : (
+                <FaEyeSlash className={styles.iconRight} />
+              )}
+            </span>
           </div>
 
           <div className={styles.recallForget}>

@@ -8,9 +8,9 @@ const router = Router();
 const JWT_SECRET = process.env.JWT_SECRET || 'sua_chave_secreta';
 
 router.post('/login', async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ success: false, message: 'Email e senha são obrigatórios' });
   }
 
@@ -23,7 +23,7 @@ router.post('/login', async (req, res) => {
       FROM usuarios
       WHERE LOWER(email) = LOWER(:email)
     `;
-    const result = await conn.execute(sql, [username.trim()], {
+    const result = await conn.execute(sql, [email.trim()], {
       outFormat: oracledb.OUT_FORMAT_OBJECT
     });
 
@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '2h' }
     );
 
-    return res.json({ success: true, token, id: user.ID });
+    return res.json({ success: true, token, id: user.ID});
 
   } catch (err) {
     console.error('Erro no login:', err);

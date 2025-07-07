@@ -12,16 +12,18 @@
   width: 450px;
   background-color: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   border: 2px solid rgba(255, 255, 255, 0.2);
   padding: 40px;
   border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .container h1 {
   text-align: center;
   font-size: 28px;
   color: #fff;
-  margin-bottom: 10px;
+  margin-bottom: 25px;
 }
 
 .error {
@@ -47,20 +49,20 @@
 .inputField {
   position: relative;
   width: 100%;
-  height: 50px;
-  margin: 25px auto;
+  margin-bottom: 30px;
 }
 
 .inputField input {
   width: 100%;
-  height: 100%;
+  height: 50px;
+  padding: 0 45px 0 45px;
   background-color: transparent;
-  outline: none;
   border: 2px solid rgba(255, 255, 255, 0.2);
   border-radius: 40px;
   font-size: 16px;
   color: #fff;
-  padding: 20px 45px;
+  box-sizing: border-box;
+  outline: none;
 }
 
 .inputField input::placeholder {
@@ -69,26 +71,42 @@
 
 .icon {
   position: absolute;
-  right: 25px;
+  left: 15px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 18px;
   color: #fff;
 }
 
+.iconLeft {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+}
+
+.iconRight {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+}
+
 .container button {
   width: 100%;
   height: 50px;
   border: none;
-  outline: none;
   border-radius: 40px;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  text-shadow: none;
   background-color: #fff;
   color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
@@ -101,10 +119,10 @@
   font-size: 15px;
   text-align: center;
   margin: 20px 0 10px;
+  color: #fff;
 }
 
 .signupLink p {
-  text-shadow: none;
   font-weight: 600;
 }
 

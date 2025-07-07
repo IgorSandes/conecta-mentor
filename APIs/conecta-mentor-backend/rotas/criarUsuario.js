@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import oracledb from 'oracledb';
 import bcrypt from 'bcrypt';
 import { getConnection } from '../config/banco.js';
 

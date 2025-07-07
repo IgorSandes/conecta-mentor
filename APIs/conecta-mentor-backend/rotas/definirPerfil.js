@@ -6,7 +6,7 @@ import oracledb from 'oracledb';
 const router = Router();
 
 router.post('/definirPerfil', autenticador, async (req, res) => {
-  const { tipo, area, texto, idade } = req.body;
+  const { tipo, area, texto } = req.body;
   const idUsuario = req.usuario.id;
 
   if (!tipo || !area || !texto) {
@@ -19,7 +19,6 @@ router.post('/definirPerfil', autenticador, async (req, res) => {
     conn = await getConnection();
 
     if (tipo === 'mentor') {
-      // Verifica se já é mentor
       const checkMentor = await conn.execute(
         `SELECT 1 FROM mentores WHERE id_mentor = :id`,
         [idUsuario],
@@ -30,7 +29,6 @@ router.post('/definirPerfil', autenticador, async (req, res) => {
         return res.status(409).json({ success: false, message: 'Este usuário já é um mentor.' });
       }
 
-      // Insere mentor
       await conn.execute(
         `INSERT INTO mentores (id_mentor, area_atuacao, competencias)
          VALUES (:id, :area, :texto)`,
@@ -39,11 +37,7 @@ router.post('/definirPerfil', autenticador, async (req, res) => {
       );
 
     } else if (tipo === 'mentorado') {
-    //   if (!idade) {
-    //     return res.status(400).json({ success: false, message: 'Campo idade é obrigatório para mentorado.' });
-    //   }
 
-      // Verifica se já é mentorado
       const checkMentorado = await conn.execute(
         `SELECT 1 FROM mentorados WHERE id_mentorado = :id`,
         [idUsuario],
@@ -54,7 +48,6 @@ router.post('/definirPerfil', autenticador, async (req, res) => {
         return res.status(409).json({ success: false, message: 'Este usuário já é um mentorado.' });
       }
 
-      // Insere mentorado
       await conn.execute(
         `INSERT INTO mentorados (id_mentorado, objetivo, area_interesse )
          VALUES (:id, :texto, :area )`,
