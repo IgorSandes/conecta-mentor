@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import { getConnection } from '../config/banco.js';
-import autenticador from '../middlewares/autenticador.js';
+
 
 const router = Router();
 
-router.delete('/deletarUsuario', autenticador, async (req, res) => {
+router.delete('/deletarUsuario', async (req, res) => {
   const { email, id } = req.body;
 
   if (!email || !id) {

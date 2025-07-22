@@ -6,6 +6,7 @@ import { Mentorados } from "./pages/Mentorados.jsx";
 import { AgendarSessao } from "./pages/AgendarSessao.jsx";
 import { Chat } from "./pages/Chat.jsx";
 import {Cadastrar} from "./pages/Cadastrar.jsx"
+import {DeletarUsuario} from "./pages/DeletarUsuario.jsx"
 import {SelecionarPerfil} from "./pages/SelecionarPerfil.jsx"
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/cadastrar" element={<Cadastrar />} />
+        <Route path="/deletarUsuario" element={<DeletarUsuario />} />
         <Route path="/selecionarperfil" element={<SelecionarPerfil />} />
         <Route path="/buscarmentores" element={<BuscarMentores />} />
         <Route path="/mentorados" element={<Mentorados />} />

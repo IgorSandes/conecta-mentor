@@ -34,6 +34,7 @@ export function Mentorados() {
             <li>Sessões</li>
             <li>Mensagens</li>
             <li>Perfil</li>
+            <a href="../deletarusuario">Deletar usuario</a>
           </ul>
         </nav>
       </aside>

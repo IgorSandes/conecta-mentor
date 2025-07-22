@@ -1,0 +1,136 @@
+.cadastrar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url(../assets/fundo-login.png);
+  background-size: cover;
+  background-position: center;
+}
+
+.container {
+  width: 450px;
+  background-color: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.container h1 {
+  text-align: center;
+  font-size: 28px;
+  color: #fff;
+  margin-bottom: 25px;
+}
+
+.error {
+  color: #ff6b6b;
+  background-color: rgba(255, 107, 107, 0.15);
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.success {
+  color: #4caf50;
+  background-color: rgba(76, 175, 80, 0.15);
+  padding: 10px;
+  margin: 15px 0;
+  border-radius: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.inputField {
+  position: relative;
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.inputField input {
+  width: 100%;
+  height: 50px;
+  padding: 0 45px 0 45px;
+  background-color: transparent;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 40px;
+  font-size: 16px;
+  color: #fff;
+  box-sizing: border-box;
+  outline: none;
+}
+
+.inputField input::placeholder {
+  color: #fff;
+}
+
+.icon {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+}
+
+.iconLeft {
+  position: absolute;
+  left: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+}
+
+.iconRight {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 18px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.container button {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 40px;
+  background-color: #fff;
+  color: #000;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container button:hover {
+  background-color: deepskyblue;
+  color: #fff;
+}
+
+.signupLink {
+  font-size: 15px;
+  text-align: center;
+  margin: 20px 0 10px;
+  color: #fff;
+}
+
+.signupLink p {
+  font-weight: 600;
+}
+
+.signupLink p a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.signupLink p a:hover {
+  text-decoration: underline;
+}
