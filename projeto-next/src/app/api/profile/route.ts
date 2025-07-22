@@ -1,35 +1,8 @@
-// Arquivo: app/api/perfil/route.ts
+// Arquivo: app/api/profile/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/lib/auth";
-
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
-  try {
-    const profile = await prisma.profile.findUnique({
-      where: {
-        id: params.id,
-      },
-    });
-
-    if (!profile) {
-      return NextResponse.json(
-        { error: "Perfil não encontrado" },
-        { status: 404 }
-      );
-    }
-
-    return NextResponse.json(profile);
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Erro interno ao buscar perfil" },
-      { status: 500 }
-    );
-  }
-}
 
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
@@ -77,7 +50,6 @@ export async function DELETE(request: Request) {
     return NextResponse.json({ error: "ID não fornecido" }, { status: 400 });
   }
 
-  // Verifica se o perfil pertence ao usuário logado
   const profile = await prisma.profile.findUnique({
     where: { id },
   });
