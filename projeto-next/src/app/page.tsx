@@ -58,11 +58,11 @@ export default function Welcome() {
           >
             Entrar com GitHub
           </button>
-          <Link href="./login">
+          {/* <Link href="./login">
             <button className="bg-white text-gray-900 hover:bg-gray-200 py-3 px-6 rounded-xl transition duration-300">
               Login com Email
             </button>
-          </Link>
+          </Link> */}
         </div>
       </div>
     </div>

@@ -51,7 +51,7 @@ export default async function CreatorPage({ params }: Props) {
           <nav>
             <ul className="flex md:flex-col gap-6 md:gap-4 text-lg">
               <li className="hover:underline cursor-pointer">
-                <a href="/home">Início</a>
+                <a href="#">Início</a>
               </li>
               <li className="hover:underline cursor-pointer">Sessões</li>
               <li className="hover:underline cursor-pointer">Mensagens</li>
