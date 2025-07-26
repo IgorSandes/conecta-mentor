@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
@@ -24,22 +18,27 @@ model User {
   sessions      Session[]
   Authenticator Authenticator[]
 
-  profiles      Profile[]       // Relação 1:N com Profile
+  profiles         Profile[] // Relação 1:N com Profile
+  calendarSessions Calendar[] // Relação 1:N com Calendar (sessões do mentor)
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Profile {
-  id          String        @id @default(cuid())
-  type        ProfileType   
+  id          String      @id @default(cuid())
+  type        ProfileType
   profession  String
   description String
 
-  userId      String
-  user        User          @relation(fields: [userId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  createdAt   DateTime      @default(now())
+  // Relações com Calendar (mentores e mentorados)
+  mentorSessions    Calendar[] @relation("MentorProfile")
+  mentoradoSessions Calendar[] @relation("MentoradoProfile")
+
+  createdAt DateTime @default(now())
 }
 
 enum ProfileType {
@@ -47,7 +46,6 @@ enum ProfileType {
   MENTORADO
 }
 
- 
 model Account {
   userId            String
   type              String
@@ -60,34 +58,33 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 
-// Optional for WebAuthn support
+
 model Authenticator {
   credentialID         String  @unique
   userId               String
@@ -97,8 +94,24 @@ model Authenticator {
   credentialDeviceType String
   credentialBackedUp   Boolean
   transports           String?
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([userId, credentialID])
+}
+
+model Calendar {
+  id          String   @id @default(cuid())
+  dateTime    DateTime
+  meetingLink String?
+
+  userId      String // Mentor (pegamos da sessão)
+  profileId   String // Perfil do mentor (da sessão)
+  mentoradoId String // ID do perfil do mentorado
+
+  user      User    @relation(fields: [userId], references: [id])
+  profile   Profile @relation("MentorProfile", fields: [profileId], references: [id])
+  mentorado Profile @relation("MentoradoProfile", fields: [mentoradoId], references: [id])
+
+  createdAt DateTime @default(now())
 }

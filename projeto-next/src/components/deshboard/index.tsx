@@ -94,11 +94,11 @@ export default function Deshboard() {
           >
             <div>
               <strong className="text-gray-900">
-                {profile.userName}, {profile.type}
+                {profile.userName} - {profile.type}
               </strong>
               <p className="text-gray-600 text-sm">{profile.profession}</p>
-            </div>
-            <div className="text-gray-500 text-sm">{profile.description}</div>
+              <div className="text-gray-500 text-sm">{profile.description}</div>
+            </div>    
           </div>
         ))}
 
