@@ -1,51 +1,58 @@
+// src/app/api/calendar/create/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(request: NextRequest) {
-  try {
-    const session = await getServerSession(authOptions);
+export async function POST(req: NextRequest) {
+  const session = await getServerSession(authOptions);
 
-    if (!session || !session.user?.email) {
-      return NextResponse.json({ message: "Não autenticado." }, { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-      include: { profiles: true },
-    });
-
-    // Verifica se existe ao menos um perfil
-    if (!user || !user.id || !user.profiles || user.profiles.length === 0) {
-      return NextResponse.json({ message: "Usuário ou perfil não encontrado." }, { status: 404 });
-    }
-
-    const profile = user.profiles[0]; // usa o primeiro perfil
-
-    const body = await request.json();
-    const { dateTime, mentoradoId, meetingLink } = body;
-
-    if (!dateTime || !mentoradoId) {
-      return NextResponse.json(
-        { message: "dateTime e mentoradoId são obrigatórios." },
-        { status: 400 }
-      );
-    }
-
-    const newSession = await prisma.calendar.create({
-      data: {
-        dateTime: new Date(dateTime),
-        mentoradoId,
-        meetingLink: meetingLink || null,
-        userId: user.id,
-        profileId: profile.id,
-      },
-    });
-
-    return NextResponse.json(newSession, { status: 201 });
-  } catch (error) {
-    console.error("Erro ao criar sessão:", error);
-    return NextResponse.json({ message: "Erro interno do servidor" }, { status: 500 });
+  if (!session || !session.user?.email) {
+    return NextResponse.json({ message: "Não autenticado." }, { status: 401 });
   }
+
+  const { dateTime, mentoradoId, meetingLink, profileId } = await req.json();
+
+  if (!dateTime || !mentoradoId || !profileId) {
+    return NextResponse.json({ message: "Campos obrigatórios ausentes." }, { status: 400 });
+  }
+
+  // Busca o usuário autenticado e seus perfis
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { profiles: true },
+  });
+
+  if (!user || !user.profiles.length) {
+    return NextResponse.json({ message: "Usuário ou perfis não encontrados." }, { status: 404 });
+  }
+
+  // Verifica se o profileId enviado pertence ao usuário autenticado e é do tipo MENTOR
+  const mentorProfile = user.profiles.find(p => p.id === profileId && p.type === "MENTOR");
+
+  if (!mentorProfile) {
+    return NextResponse.json({ message: "Perfil de mentor inválido ou não encontrado." }, { status: 403 });
+  }
+
+  // Verifica se o perfil do mentorado realmente existe
+  const mentoradoProfile = await prisma.profile.findUnique({
+    where: { id: mentoradoId },
+  });
+
+  if (!mentoradoProfile) {
+    return NextResponse.json({ message: "Mentorado não encontrado." }, { status: 404 });
+  }
+
+  // Cria a nova sessão de mentoria
+  const newSession = await prisma.calendar.create({
+    data: {
+      dateTime: new Date(dateTime), // converter para Date se necessário
+      meetingLink,
+      user: { connect: { id: user.id } },
+      profile: { connect: { id: mentorProfile.id } },
+      mentorado: { connect: { id: mentoradoProfile.id } },
+    },
+  });
+
+  return NextResponse.json(newSession);
 }

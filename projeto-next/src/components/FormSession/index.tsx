@@ -19,18 +19,21 @@ export default function FormSession({ mentoradoProfiles, onCreate }: FormSession
     setLoading(true);
     setError(null);
 
+    if (!dateTime || !mentoradoId) {
+      setError("Por favor, preencha todos os campos obrigatórios.");
+      setLoading(false);
+      return;
+    }
+
     try {
-      if (!dateTime || !mentoradoId) {
-        setError("Por favor, preencha todos os campos obrigatórios.");
-        setLoading(false);
-        return;
-      }
+      // Converter dateTime para formato ISO (exigido pelo Prisma)
+      const isoDateTime = new Date(dateTime).toISOString();
 
       const response = await fetch("/api/calendar/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          dateTime,
+          dateTime: isoDateTime,
           mentoradoId,
           meetingLink,
         }),

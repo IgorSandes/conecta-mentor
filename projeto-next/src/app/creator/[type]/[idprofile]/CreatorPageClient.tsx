@@ -8,9 +8,11 @@ import Deshboard from "@/components/deshboard";
 import Calendar from "@/components/Calendar";
 import { Session } from "next-auth";
 
+type ProfileType = "MENTOR" | "MENTORADO";
+
 interface Profile {
   id: string;
-  type: string;
+  type: ProfileType;
   profession: string;
   description: string;
 }
@@ -22,7 +24,7 @@ interface CreatorPageClientProps {
 
 interface Mentorado {
   id: string;
-  label: string; // nome + profissão
+  label: string;
 }
 
 function MensagensTeste() {
@@ -38,10 +40,12 @@ function FormSession({
   onClose,
   onSuccess,
   mentoradoProfiles,
+  profileId,
 }: {
   onClose: () => void;
   onSuccess: () => void;
   mentoradoProfiles: Mentorado[];
+  profileId: string;
 }) {
   const [dateTime, setDateTime] = useState("");
   const [mentoradoId, setMentoradoId] = useState("");
@@ -61,13 +65,17 @@ function FormSession({
     }
 
     try {
+      // Formata para ISO 8601 completo (com segundos e timezone UTC)
+      const formattedDateTime = new Date(dateTime).toISOString();
+
       const res = await fetch("/api/calendar/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          dateTime,
+          dateTime: formattedDateTime,
           mentoradoId,
           meetingLink,
+          profileId, // ✅ Passando o profileId
         }),
       });
 
@@ -281,11 +289,15 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
                     mentoradoProfiles={mentoradoProfiles}
                     onClose={() => setShowForm(false)}
                     onSuccess={onCreateSuccess}
+                    profileId={profile.id} // ✅ enviado aqui também
                   />
                 )}
 
-                {/* 🔧 AJUSTADO PARA USAR O ID CORRETO DO PERFIL */}
-                <Calendar profileId={profile.id} key={refreshCalendar} />
+                <Calendar
+                  profileId={profile.id}
+                  profileType={profile.type}
+                  refreshKey={refreshCalendar} // <-- isso faltava
+                />
               </>
             )}
 

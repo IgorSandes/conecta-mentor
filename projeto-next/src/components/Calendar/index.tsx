@@ -1,49 +1,71 @@
+// components/Calendar.tsx
 "use client";
 
 import { useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import { EventInput } from "@fullcalendar/core";
 import ptBrLocale from "@fullcalendar/core/locales/pt-br";
-import "./calendar.css";
 
-type CalendarProps = {
+type ProfileType = "MENTOR" | "MENTORADO";
+
+interface CalendarProps {
   profileId: string;
-};
+  profileType: ProfileType;
+  refreshKey: number; // <- nova prop para forçar recarregamento
+}
 
-export default function Calendar({ profileId }: CalendarProps) {
-  const [events, setEvents] = useState<EventInput[]>([]);
+interface SessionEvent {
+  id: string;
+  title: string;
+  start: string;
+}
+
+export default function Calendar({ profileId, profileType, refreshKey }: CalendarProps) {
+  const [events, setEvents] = useState<SessionEvent[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!profileId) return;
-
-    const fetchEvents = async () => {
+    async function fetchEvents() {
+      setLoading(true);
       try {
-        const res = await fetch(`/api/calendar/${profileId}`);
+        const res = await fetch(`/api/calendar?profileId=${profileId}&profileType=${profileType}`);
+        if (!res.ok) throw new Error("Erro ao carregar eventos");
+
         const data = await res.json();
 
-        const mappedEvents = data.map((item: any) => ({
-          title: item.meetingLink || "Sessão de mentoria",
-          date: item.dateTime.split("T")[0],
+        const formatted = data.map((session: any) => ({
+          id: session.id,
+          title: session.title || "Sessão de Mentoria",
+          start: session.dateTime,
         }));
 
-        setEvents(mappedEvents);
+        setEvents(formatted);
       } catch (error) {
-        console.error("Erro ao buscar eventos:", error);
+        console.error("Erro ao carregar calendário:", error);
+        setEvents([]);
+      } finally {
+        setLoading(false);
       }
-    };
+    }
 
     fetchEvents();
-  }, [profileId]);
+  }, [profileId, profileType, refreshKey]); // <- inclui refreshKey como dependência
 
   return (
-    <div className="p-4">
-      <FullCalendar
-        plugins={[dayGridPlugin]}
-        initialView="dayGridMonth"
-        events={events}
-        locale={ptBrLocale}
-      />
+    <div className="bg-white p-4 rounded shadow">
+      <h2 className="text-xl font-semibold mb-4">Calendário de Sessões</h2>
+
+      {loading ? (
+        <h2>Carregando calendário...</h2>
+      ) : (
+        <FullCalendar
+          plugins={[dayGridPlugin]}
+          initialView="dayGridMonth"
+          locale={ptBrLocale}
+          events={events}
+          height="auto"
+        />
+      )}
     </div>
   );
 }
