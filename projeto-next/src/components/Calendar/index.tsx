@@ -131,8 +131,8 @@ export default function Calendar({ profileId, profileType, refreshKey }: Calenda
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow">
-      <h2 className="text-3xl text-center font-Arial mb-4">Calendário de Sessões</h2>
+    <div className="bg-white p-4 rounded shadow mt-4">
+      <h2 className="text-3xl text-center font-Arial m-4">Calendário de Sessões</h2>
 
       {loading ? (
         <h2 className="text-center">Carregando calendário...</h2>

@@ -27,15 +27,13 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-100">
-      {/* Header atualizado */}
       <Header session={session} />
 
-      {/* Conteúdo principal */}
       <main className="flex-grow px-4 py-4">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-white shadow rounded-xl p-6">
             <p className="text-sm text-gray-500">Perfis Mentores</p>
-            <h2 className="text-2xl font-bold text-green-600">{mentors.length}</h2>
+            <h2 className="text-2xl font-bold text-blue-600">{mentors.length}</h2>
           </div>
           <div className="bg-white shadow rounded-xl p-6">
             <p className="text-sm text-gray-500">Perfis Mentorados</p>
@@ -43,7 +41,7 @@ export default async function Home() {
           </div>
           <div className="bg-white shadow rounded-xl p-6">
             <p className="text-sm text-gray-500">Total de Perfis</p>
-            <h2 className="text-2xl font-bold text-blue-600">{profiles.length}</h2>
+            <h2 className="text-2xl font-bold text-black">{profiles.length}</h2>
           </div>
         </div>
 
@@ -52,14 +50,14 @@ export default async function Home() {
             <>
               {mentors.length > 0 && (
                 <section className="mb-6">
-                  <h2 className="text-xl font-semibold mb-3 text-green-700">Mentores</h2>
+                  <h2 className="text-xl font-semibold mb-3 text-blue-700">Mentores</h2>
                   <ul className="space-y-3">
                     {mentors.map((profile) => (
                       <li key={profile.id}>
                         <div className="flex justify-between items-center gap-4">
                           <Link
                             href={`/creator/${profile.type.toLowerCase()}/${profile.id}`}
-                            className="flex-1 block border border-green-200 rounded p-4 hover:bg-green-50 transition"
+                            className="flex-1 block border border-blue-200 rounded p-4 hover:bg-blue-50 transition"
                           >
                             <strong>{profile.profession}</strong>
                             <p className="text-gray-600 text-sm">{profile.description}</p>
@@ -100,10 +98,8 @@ export default async function Home() {
         </div>
       </main>
 
-      {/* Footer */}
       <Footer />
 
-      {/* Botão flutuante */}
       <Link
         href="/profile"
         className="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 transition z-50"

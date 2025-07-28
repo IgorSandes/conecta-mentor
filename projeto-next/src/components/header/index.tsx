@@ -9,7 +9,11 @@ type HeaderProps = {
 
 export default function Header({ session }: HeaderProps) {
   return (
-    <header className="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 px-6 py-4">
+    <header
+      className="relative flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 px-6 py-4 border-b border-transparent
+      after:absolute after:bottom-0 after:h-0.5 after:w-[98%] after:left-1/2 after:-translate-x-1/2
+      after:bg-gradient-to-r after:from-blue-500 after:via-purple-900 after:to-blue-900"
+    >
       <div className="text-center md:text-left">
         {session?.user ? (
           <>
