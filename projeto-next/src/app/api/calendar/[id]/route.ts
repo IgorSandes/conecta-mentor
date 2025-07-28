@@ -40,3 +40,48 @@ export async function GET(
 
   return NextResponse.json(calendar);
 }
+
+export async function DELETE(
+  _req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user?.email) {
+    return NextResponse.json({ message: "Não autenticado." }, { status: 401 });
+  }
+
+  const calendarId = params.id;
+
+  // Antes de deletar, é interessante garantir que o evento pertence a um perfil do usuário
+  const user = await prisma.user.findUnique({
+    where: { email: session.user.email },
+    include: { profiles: true },
+  });
+
+  if (!user) {
+    return NextResponse.json({ message: "Usuário não encontrado." }, { status: 404 });
+  }
+
+  // Busca o evento para verificar se o usuário pode deletar
+  const event = await prisma.calendar.findUnique({
+    where: { id: calendarId },
+  });
+
+  if (!event) {
+    return NextResponse.json({ message: "Evento não encontrado." }, { status: 404 });
+  }
+
+  // Verifica se o evento está relacionado a algum perfil do usuário
+  const userProfileIds = user.profiles.map((p) => p.id);
+  if (!userProfileIds.includes(event.profileId) && !userProfileIds.includes(event.mentoradoId)) {
+    return NextResponse.json({ message: "Acesso não autorizado." }, { status: 403 });
+  }
+
+  // Deleta o evento
+  await prisma.calendar.delete({
+    where: { id: calendarId },
+  });
+
+  return NextResponse.json({ message: "Evento deletado com sucesso." });
+}
