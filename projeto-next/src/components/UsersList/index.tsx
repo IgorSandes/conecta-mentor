@@ -1,5 +1,6 @@
 "use client";
 
+import { FaPlus, FaCommentDots } from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 type Profile = {
@@ -7,28 +8,34 @@ type Profile = {
   type: string;
   profession: string;
   description: string;
+  userName: string;
 };
 
 type User = {
   id: string;
-  name: string;
+  name?: string;
   email: string;
-  profiles: Profile[];
+  profiles: Omit<Profile, "userName">[];
 };
 
-export default function Deshboard() {
+interface UsersListProps {
+  loggedUserId: string;
+  loggedUserProfileId: string;
+}
+
+export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersListProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [addingFavoriteId, setAddingFavoriteId] = useState<string | null>(null);
 
-  const listUsers = async () => {
+  async function listUsers() {
     try {
       const response = await fetch("/api/users", {
         method: "GET",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
       });
-
       const data = await response.json();
 
       if (!response.ok) {
@@ -37,13 +44,13 @@ export default function Deshboard() {
       }
 
       setUsers(data);
-    } catch (err) {
-      console.error("Erro ao buscar usuários:", err);
+    } catch (error) {
+      console.error("Erro ao buscar usuários:", error);
       alert("Erro ao buscar usuários.");
     } finally {
       setLoading(false);
     }
-  };
+  }
 
   useEffect(() => {
     listUsers();
@@ -51,11 +58,12 @@ export default function Deshboard() {
 
   const normalizedSearch = search.toLowerCase();
 
-  const filteredCards = users.flatMap((user) =>
+  const filteredProfiles: Profile[] = users.flatMap((user) =>
     user.profiles
       .filter((profile) => {
+        const name = user.name?.toLowerCase() || ""; // Evita erro se name for undefined
         return (
-          user.name.toLowerCase().includes(normalizedSearch) ||
+          name.includes(normalizedSearch) ||
           profile.type.toLowerCase().includes(normalizedSearch) ||
           profile.profession.toLowerCase().includes(normalizedSearch) ||
           profile.description.toLowerCase().includes(normalizedSearch)
@@ -63,9 +71,43 @@ export default function Deshboard() {
       })
       .map((profile) => ({
         ...profile,
-        userName: user.name,
+        userName: user.name || "Sem nome",
       }))
   );
+
+  async function handleAddFavorite(favoriteId: string) {
+    if (!loggedUserId || !loggedUserProfileId) {
+      alert("Usuário não autenticado ou perfil não carregado.");
+      return;
+    }
+
+    setAddingFavoriteId(favoriteId);
+    try {
+      const response = await fetch("/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          userId: loggedUserId,
+          userProfileId: loggedUserProfileId,
+          favoriteId,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.error || "Erro ao adicionar favorito.");
+      } else {
+        alert("Favorito adicionado com sucesso!");
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar favorito:", error);
+      alert("Erro ao adicionar favorito.");
+    } finally {
+      setAddingFavoriteId(null);
+    }
+  }
 
   return (
     <section className="bg-white rounded-xl shadow-md p-6">
@@ -82,12 +124,12 @@ export default function Deshboard() {
 
       {loading && <p className="text-gray-600">Carregando...</p>}
 
-      {!loading && filteredCards.length === 0 && (
+      {!loading && filteredProfiles.length === 0 && (
         <p className="text-gray-600">Nenhum resultado encontrado.</p>
       )}
 
       {!loading &&
-        filteredCards.map((profile) => (
+        filteredProfiles.map((profile) => (
           <div
             key={profile.id}
             className="border border-gray-200 rounded-lg p-4 flex justify-between items-center mb-4 hover:bg-gray-50 transition"
@@ -98,12 +140,26 @@ export default function Deshboard() {
               </strong>
               <p className="text-gray-600 text-sm">{profile.profession}</p>
               <div className="text-gray-500 text-sm">{profile.description}</div>
-            </div>    
+            </div>
+
+            <div className="flex gap-3 text-gray-600">
+              <button
+                title="Adicionar"
+                className="hover:text-blue-600 transition disabled:opacity-50"
+                onClick={() => handleAddFavorite(profile.id)}
+                disabled={addingFavoriteId === profile.id}
+              >
+                <FaPlus />
+              </button>
+              <button title="Mensagem" className="hover:text-purple-600 transition">
+                <FaCommentDots />
+              </button>
+            </div>
           </div>
         ))}
 
       {!loading && users.length > 0 && (
-        <div className="text-green-600 hover:underline cursor-pointer text-sm text-right">
+        <div className="text-blue-600 hover:underline cursor-pointer text-sm text-right">
           Ver mais &gt;
         </div>
       )}

@@ -21,6 +21,8 @@ model User {
   profiles         Profile[] // Relação 1:N com Profile
   calendarSessions Calendar[] // Relação 1:N com Calendar (sessões do mentor)
 
+  favorites Favorite[] @relation("UserFavorites") // relação inversa para Favorite.user
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -37,6 +39,10 @@ model Profile {
   // Relações com Calendar (mentores e mentorados)
   mentorSessions    Calendar[] @relation("MentorProfile")
   mentoradoSessions Calendar[] @relation("MentoradoProfile")
+
+  // Relações com Favorite para granularidade
+  favoritesGiven    Favorite[] @relation("UserProfileFavorites")
+  favoritesReceived Favorite[] @relation("FavoritedProfiles")
 
   createdAt DateTime @default(now())
 }
@@ -114,4 +120,20 @@ model Calendar {
   mentorado Profile @relation("MentoradoProfile", fields: [mentoradoId], references: [id])
 
   createdAt DateTime @default(now())
+}
+
+model Favorite {
+  id String @id @default(cuid())
+
+  userId        String // Usuário que favoritou
+  userProfileId String // Perfil do usuário que fez o favorito
+  favoriteId    String // Perfil favoritado
+
+  user        User    @relation("UserFavorites", fields: [userId], references: [id])
+  userProfile Profile @relation("UserProfileFavorites", fields: [userProfileId], references: [id])
+  favorite    Profile @relation("FavoritedProfiles", fields: [favoriteId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@unique([userProfileId, favoriteId]) // evita duplicidade
 }

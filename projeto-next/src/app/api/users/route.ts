@@ -12,13 +12,24 @@ export async function GET() {
 
   try {
     const users = await prisma.user.findMany({
-      include: {
-        profiles: true, // ou profile se for 1-para-1
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        profiles: {
+          select: {
+            id: true,
+            type: true,
+            profession: true,
+            description: true,
+          },
+        },
       },
     });
 
     return NextResponse.json(users);
   } catch (error) {
+    console.error("Erro ao buscar usuários com perfis:", error);
     return NextResponse.json(
       { error: "Erro ao buscar usuários com perfis" },
       { status: 500 }

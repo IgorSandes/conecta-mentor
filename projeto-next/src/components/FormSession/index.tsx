@@ -1,53 +1,88 @@
 "use client";
 
-import { useState, FormEvent } from "react";
+import { useEffect, useState } from "react";
 
 interface FormSessionProps {
-  mentoradoProfiles: { id: string; profession: string }[]; // lista para selecionar mentorado
-  onCreate?: () => void; // callback após criar
+  profileId: string;
+  onSuccess: () => void;
+  onClose: () => void;
 }
 
-export default function FormSession({ mentoradoProfiles, onCreate }: FormSessionProps) {
-  const [dateTime, setDateTime] = useState("");
+interface MentoradoFavorite {
+  id: string;
+  userName: string;
+  profile: {
+    id: string;
+    type: string;
+    profession: string;
+    description: string;
+  };
+}
+
+export default function FormSession({ profileId, onSuccess, onClose }: FormSessionProps) {
+  const [mentoradoFavorites, setMentoradoFavorites] = useState<MentoradoFavorite[]>([]);
   const [mentoradoId, setMentoradoId] = useState("");
+  const [dateTime, setDateTime] = useState("");
   const [meetingLink, setMeetingLink] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  async function handleSubmit(e: FormEvent) {
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      try {
+        const response = await fetch(`/api/favorites?userProfileId=${profileId}`);
+        const data = await response.json();
+
+        const filteredData = data.filter(
+          (fav: MentoradoFavorite) => fav.profile.type === "MENTORADO"
+        );
+
+        setMentoradoFavorites(filteredData);
+      } catch (err) {
+        console.error("Erro ao buscar favoritos:", err);
+      }
+    };
+
+    if (profileId) {
+      fetchFavorites();
+    }
+  }, [profileId]);
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
     setError(null);
 
     if (!dateTime || !mentoradoId) {
-      setError("Por favor, preencha todos os campos obrigatórios.");
-      setLoading(false);
+      setError("Por favor, preencha os campos obrigatórios.");
       return;
     }
 
-    try {
-      // Converter dateTime para formato ISO (exigido pelo Prisma)
-      const isoDateTime = new Date(dateTime).toISOString();
+    setLoading(true);
 
-      const response = await fetch("/api/calendar/create", {
+    try {
+      const formattedDateTime = new Date(dateTime).toISOString();
+
+      const res = await fetch("/api/calendar/create", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          dateTime: isoDateTime,
+          dateTime: formattedDateTime,
           mentoradoId,
           meetingLink,
+          profileId,
         }),
       });
 
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.message || "Erro ao criar sessão.");
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || "Erro ao criar sessão");
       }
 
       setDateTime("");
       setMentoradoId("");
       setMeetingLink("");
-      if (onCreate) onCreate();
+      onSuccess();
+      onClose();
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -56,66 +91,97 @@ export default function FormSession({ mentoradoProfiles, onCreate }: FormSession
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-md p-4 bg-white rounded shadow space-y-4">
-      <h2 className="text-xl font-semibold mb-4">Criar nova sessão</h2>
-
-      {error && <p className="text-red-600">{error}</p>}
-
-      <div>
-        <label htmlFor="dateTime" className="block font-medium mb-1">
-          Data e hora <span className="text-red-600">*</span>
-        </label>
-        <input
-          id="dateTime"
-          type="datetime-local"
-          value={dateTime}
-          onChange={(e) => setDateTime(e.target.value)}
-          className="w-full border rounded px-3 py-2"
-          required
-        />
-      </div>
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto space-y-6"
+    >
+      {error && (
+        <p className="text-red-600 bg-red-100 border border-red-300 rounded px-4 py-2">
+          {error}
+        </p>
+      )}
 
       <div>
-        <label htmlFor="mentorado" className="block font-medium mb-1">
-          Mentorado <span className="text-red-600">*</span>
+        <label
+          htmlFor="mentorado"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Selecionar mentorado favorito
         </label>
         <select
           id="mentorado"
           value={mentoradoId}
           onChange={(e) => setMentoradoId(e.target.value)}
-          className="w-full border rounded px-3 py-2"
+          className="w-full border border-gray-300 rounded-md px-3 py-2
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     transition duration-200 ease-in-out"
           required
         >
-          <option value="">Selecione o mentorado</option>
-          {mentoradoProfiles.map((p) => (
-            <option key={p.id} value={p.id}>
-              {p.profession}
+          <option value="">Selecione um mentorado</option>
+          {mentoradoFavorites.map((fav) => (
+            <option key={fav.profile.id} value={fav.profile.id}>
+              {fav.userName} - {fav.profile.profession}
             </option>
           ))}
         </select>
       </div>
 
       <div>
-        <label htmlFor="meetingLink" className="block font-medium mb-1">
-          Link da reunião (opcional)
+        <label
+          htmlFor="dateTime"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Data e horário
         </label>
         <input
-          id="meetingLink"
-          type="url"
-          placeholder="https://exemplo.com/reuniao"
-          value={meetingLink}
-          onChange={(e) => setMeetingLink(e.target.value)}
-          className="w-full border rounded px-3 py-2"
+          type="datetime-local"
+          id="dateTime"
+          value={dateTime}
+          onChange={(e) => setDateTime(e.target.value)}
+          className="w-full border border-gray-300 rounded-md px-3 py-2
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     transition duration-200 ease-in-out"
+          required
         />
       </div>
 
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 disabled:opacity-50"
-      >
-        {loading ? "Salvando..." : "Criar Sessão"}
-      </button>
+      <div>
+        <label
+          htmlFor="meetingLink"
+          className="block text-gray-700 font-semibold mb-2"
+        >
+          Link da reunião (opcional)
+        </label>
+        <input
+          type="url"
+          id="meetingLink"
+          value={meetingLink}
+          onChange={(e) => setMeetingLink(e.target.value)}
+          placeholder="https://..."
+          className="w-full border border-gray-300 rounded-md px-3 py-2
+                     focus:outline-none focus:ring-2 focus:ring-blue-500
+                     transition duration-200 ease-in-out"
+        />
+      </div>
+
+      <div className="flex justify-end gap-4">
+        <button
+          type="button"
+          onClick={onClose}
+          className="bg-gray-500 text-white px-5 py-2 rounded-md
+                     hover:bg-gray-600 transition"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          disabled={loading}
+          className="bg-blue-600 text-white px-5 py-2 rounded-md
+                     hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {loading ? "Criando..." : "Criar sessão"}
+        </button>
+      </div>
     </form>
   );
 }

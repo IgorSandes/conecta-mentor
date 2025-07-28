@@ -2,8 +2,8 @@ import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { PrismaClient, ProfileType } from "@/generated/prisma";
-import Header from "@/components/header";
-import Footer from "@/components/footer";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 import DeleteButton from "@/components/DeleteButton";
 import { FaPlus } from "react-icons/fa";
 
