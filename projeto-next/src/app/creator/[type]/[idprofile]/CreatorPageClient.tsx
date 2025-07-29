@@ -62,32 +62,32 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
           <nav>
             <ul className="flex md:flex-col gap-6 md:gap-4 text-lg">
               <li
-                className={`hover:underline cursor-pointer ${
-                  activeTab === "inicio" ? "underline font-semibold" : ""
+                className={`hover: cursor-pointer ${
+                  activeTab === "inicio" ? " font-semibold" : ""
                 }`}
                 onClick={() => setActiveTab("inicio")}
               >
                 Início
               </li>
               <li
-                className={`hover:underline cursor-pointer ${
-                  activeTab === "minha-rede" ? "underline font-semibold" : ""
+                className={`hover: cursor-pointer ${
+                  activeTab === "minha-rede" ? " font-semibold" : ""
                 }`}
                 onClick={() => setActiveTab("minha-rede")}
               >
                 Minha Rede
               </li>
               <li
-                className={`hover:underline cursor-pointer ${
-                  activeTab === "sessoes" ? "underline font-semibold" : ""
+                className={`hover: cursor-pointer ${
+                  activeTab === "sessoes" ? " font-semibold" : ""
                 }`}
                 onClick={() => setActiveTab("sessoes")}
               >
                 Sessões
               </li>
               <li
-                className={`hover:underline cursor-pointer ${
-                  activeTab === "mensagem" ? "underline font-semibold" : ""
+                className={`hover: cursor-pointer ${
+                  activeTab === "mensagem" ? " font-semibold" : ""
                 }`}
                 onClick={() => setActiveTab("mensagem")}
               >

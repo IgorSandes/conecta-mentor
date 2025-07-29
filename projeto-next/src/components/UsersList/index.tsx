@@ -23,10 +23,22 @@ interface UsersListProps {
   loggedUserProfileId: string;
 }
 
+type Favorite = {
+  id: string;
+  userName: string;
+  profile: {
+    id: string;
+    type: string;
+    profession: string;
+    description: string;
+  };
+};
+
 export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersListProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [addingFavoriteId, setAddingFavoriteId] = useState<string | null>(null);
 
   async function listUsers() {
@@ -52,16 +64,42 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
     }
   }
 
+  async function listFavorites() {
+    if (!loggedUserProfileId) return; // evita chamada sem ID válido
+
+    try {
+      const response = await fetch(`/api/favorites?userProfileId=${loggedUserProfileId}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+      });
+      const data = await response.json();
+
+      if (response.ok) {
+        setFavorites(data);
+      } else {
+        console.error("Erro ao buscar favoritos:", data.error);
+      }
+    } catch (error) {
+      console.error("Erro ao buscar favoritos:", error);
+    }
+  }
+
   useEffect(() => {
     listUsers();
   }, []);
+
+  // Chama listFavorites quando loggedUserProfileId estiver disponível ou mudar
+  useEffect(() => {
+    listFavorites();
+  }, [loggedUserProfileId]);
 
   const normalizedSearch = search.toLowerCase();
 
   const filteredProfiles: Profile[] = users.flatMap((user) =>
     user.profiles
       .filter((profile) => {
-        const name = user.name?.toLowerCase() || ""; // Evita erro se name for undefined
+        const name = user.name?.toLowerCase() || "";
         return (
           name.includes(normalizedSearch) ||
           profile.type.toLowerCase().includes(normalizedSearch) ||
@@ -78,6 +116,12 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
   async function handleAddFavorite(favoriteId: string) {
     if (!loggedUserId || !loggedUserProfileId) {
       alert("Usuário não autenticado ou perfil não carregado.");
+      return;
+    }
+
+    const jaFavoritado = favorites.some((fav) => fav.profile.id === favoriteId);
+    if (jaFavoritado) {
+      alert("Este perfil já foi favoritado.");
       return;
     }
 
@@ -100,6 +144,7 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
         alert(data.error || "Erro ao adicionar favorito.");
       } else {
         alert("Favorito adicionado com sucesso!");
+        await listFavorites(); // Atualiza lista de favoritos após adicionar
       }
     } catch (error) {
       console.error("Erro ao adicionar favorito:", error);
@@ -129,34 +174,38 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
       )}
 
       {!loading &&
-        filteredProfiles.map((profile) => (
-          <div
-            key={profile.id}
-            className="border border-gray-200 rounded-lg p-4 flex justify-between items-center mb-4 hover:bg-gray-50 transition"
-          >
-            <div>
-              <strong className="text-gray-900">
-                {profile.userName} - {profile.type}
-              </strong>
-              <p className="text-gray-600 text-sm">{profile.profession}</p>
-              <div className="text-gray-500 text-sm">{profile.description}</div>
-            </div>
+        filteredProfiles.map((profile) => {
+          const jaFavoritado = favorites.some((fav) => fav.profile.id === profile.id);
 
-            <div className="flex gap-3 text-gray-600">
-              <button
-                title="Adicionar"
-                className="hover:text-blue-600 transition disabled:opacity-50"
-                onClick={() => handleAddFavorite(profile.id)}
-                disabled={addingFavoriteId === profile.id}
-              >
-                <FaPlus />
-              </button>
-              <button title="Mensagem" className="hover:text-purple-600 transition">
-                <FaCommentDots />
-              </button>
+          return (
+            <div
+              key={profile.id}
+              className="border border-gray-200 rounded-lg p-4 flex justify-between items-center mb-4 hover:bg-gray-50 transition"
+            >
+              <div>
+                <strong className="text-gray-900">
+                  {profile.userName} - {profile.type}
+                </strong>
+                <p className="text-gray-600 text-sm">{profile.profession}</p>
+                <div className="text-gray-500 text-sm">{profile.description}</div>
+              </div>
+
+              <div className="flex gap-3 text-gray-600">
+                <button
+                  title="Adicionar"
+                  className="hover:text-blue-600 transition disabled:opacity-50"
+                  onClick={() => handleAddFavorite(profile.id)}
+                  disabled={addingFavoriteId === profile.id || jaFavoritado}
+                >
+                  <FaPlus />
+                </button>
+                <button title="Mensagem" className="hover:text-purple-600 transition">
+                  <FaCommentDots />
+                </button>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
       {!loading && users.length > 0 && (
         <div className="text-blue-600 hover:underline cursor-pointer text-sm text-right">
