@@ -62,7 +62,6 @@ export default async function Home() {
                             <strong>{profile.profession}</strong>
                             <p className="text-gray-600 text-sm">{profile.description}</p>
                           </Link>
-                          <DeleteButton id={profile.id} />
                         </div>
                       </li>
                     ))}
@@ -84,7 +83,6 @@ export default async function Home() {
                             <strong>{profile.profession}</strong>
                             <p className="text-gray-600 text-sm">{profile.description}</p>
                           </Link>
-                          <DeleteButton id={profile.id} />
                         </div>
                       </li>
                     ))}

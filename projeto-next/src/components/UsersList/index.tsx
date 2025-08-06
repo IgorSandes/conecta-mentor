@@ -1,26 +1,31 @@
-"use client";
+'use client';
 
-import { FaPlus, FaCommentDots } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { FaPlus, FaCommentDots } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+
+type ProfileType = 'MENTOR' | 'MENTORADO';
 
 type Profile = {
   id: string;
-  type: string;
+  type: ProfileType;
   profession: string;
   description: string;
   userName: string;
+  userId: string;
 };
 
 type User = {
   id: string;
   name?: string;
   email: string;
-  profiles: Omit<Profile, "userName">[];
+  profiles: Omit<Profile, 'userName' | 'userId'>[];
 };
 
 interface UsersListProps {
   loggedUserId: string;
   loggedUserProfileId: string;
+  loggedUserProfileType: ProfileType;
+  loggedUserProfession: string; // <- Pegamos a profissão do perfil logado
 }
 
 type Favorite = {
@@ -28,60 +33,68 @@ type Favorite = {
   userName: string;
   profile: {
     id: string;
-    type: string;
+    type: ProfileType;
     profession: string;
     description: string;
   };
 };
 
-export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersListProps) {
+export default function UsersList({
+  loggedUserId,
+  loggedUserProfileId,
+  loggedUserProfileType,
+  loggedUserProfession,
+}: UsersListProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [addingFavoriteId, setAddingFavoriteId] = useState<string | null>(null);
 
   async function listUsers() {
     try {
-      const response = await fetch("/api/users", {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+      const response = await fetch('/api/users', {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
       });
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || "Erro ao buscar usuários.");
+        alert(data.error || 'Erro ao buscar usuários.');
         return;
       }
 
       setUsers(data);
     } catch (error) {
-      console.error("Erro ao buscar usuários:", error);
-      alert("Erro ao buscar usuários.");
+      console.error('Erro ao buscar usuários:', error);
+      alert('Erro ao buscar usuários.');
     } finally {
       setLoading(false);
     }
   }
 
   async function listFavorites() {
-    if (!loggedUserProfileId) return; // evita chamada sem ID válido
+    if (!loggedUserProfileId) return;
 
     try {
-      const response = await fetch(`/api/favorites?userProfileId=${loggedUserProfileId}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      });
+      const response = await fetch(
+        `/api/favorites?userProfileId=${loggedUserProfileId}`,
+        {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+        }
+      );
       const data = await response.json();
 
       if (response.ok) {
         setFavorites(data);
       } else {
-        console.error("Erro ao buscar favoritos:", data.error);
+        console.error('Erro ao buscar favoritos:', data.error);
       }
     } catch (error) {
-      console.error("Erro ao buscar favoritos:", error);
+      console.error('Erro ao buscar favoritos:', error);
     }
   }
 
@@ -89,7 +102,6 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
     listUsers();
   }, []);
 
-  // Chama listFavorites quando loggedUserProfileId estiver disponível ou mudar
   useEffect(() => {
     listFavorites();
   }, [loggedUserProfileId]);
@@ -99,7 +111,26 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
   const filteredProfiles: Profile[] = users.flatMap((user) =>
     user.profiles
       .filter((profile) => {
-        const name = user.name?.toLowerCase() || "";
+        // Não listar o próprio usuário
+        if (user.id === loggedUserId) return false;
+
+        // Listar apenas perfis do tipo oposto
+        if (
+          loggedUserProfileType === 'MENTOR' &&
+          profile.type !== 'MENTORADO'
+        )
+          return false;
+        if (
+          loggedUserProfileType === 'MENTORADO' &&
+          profile.type !== 'MENTOR'
+        )
+          return false;
+
+        // Filtro por profissão (automático)
+        if (profile.profession !== loggedUserProfession) return false;
+
+        // Filtro de busca (texto)
+        const name = user.name?.toLowerCase() || '';
         return (
           name.includes(normalizedSearch) ||
           profile.type.toLowerCase().includes(normalizedSearch) ||
@@ -109,28 +140,29 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
       })
       .map((profile) => ({
         ...profile,
-        userName: user.name || "Sem nome",
+        userName: user.name || 'Sem nome',
+        userId: user.id,
       }))
   );
 
   async function handleAddFavorite(favoriteId: string) {
     if (!loggedUserId || !loggedUserProfileId) {
-      alert("Usuário não autenticado ou perfil não carregado.");
+      alert('Usuário não autenticado ou perfil não carregado.');
       return;
     }
 
     const jaFavoritado = favorites.some((fav) => fav.profile.id === favoriteId);
     if (jaFavoritado) {
-      alert("Este perfil já foi favoritado.");
+      alert('Este perfil já foi favoritado.');
       return;
     }
 
     setAddingFavoriteId(favoriteId);
     try {
-      const response = await fetch("/api/favorites", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+      const response = await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({
           userId: loggedUserId,
           userProfileId: loggedUserProfileId,
@@ -141,23 +173,33 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
       const data = await response.json();
 
       if (!response.ok) {
-        alert(data.error || "Erro ao adicionar favorito.");
+        alert(data.error || 'Erro ao adicionar favorito.');
       } else {
-        alert("Favorito adicionado com sucesso!");
-        await listFavorites(); // Atualiza lista de favoritos após adicionar
+        alert('Favorito adicionado com sucesso!');
+        await listFavorites();
       }
     } catch (error) {
-      console.error("Erro ao adicionar favorito:", error);
-      alert("Erro ao adicionar favorito.");
+      console.error('Erro ao adicionar favorito:', error);
+      alert('Erro ao adicionar favorito.');
     } finally {
       setAddingFavoriteId(null);
     }
   }
 
+  function capitalize(text: string) {
+    return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
+  }
+
   return (
     <section className="bg-white rounded-xl shadow-md p-6">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-800">Lista de Usuários</h2>
+        <h2 className="text-xl font-semibold text-gray-800">
+          Lista de {loggedUserProfileType === 'MENTOR' ? 'Mentorados' : 'Mentores'} em
+          <span className="text-blue-600 ml-1">
+            {capitalize(loggedUserProfession)}
+          </span>
+        </h2>
+
         <input
           type="text"
           placeholder="Buscar..."
@@ -175,7 +217,9 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
 
       {!loading &&
         filteredProfiles.map((profile) => {
-          const jaFavoritado = favorites.some((fav) => fav.profile.id === profile.id);
+          const jaFavoritado = favorites.some(
+            (fav) => fav.profile.id === profile.id
+          );
 
           return (
             <div
@@ -206,12 +250,6 @@ export default function UsersList({ loggedUserId, loggedUserProfileId }: UsersLi
             </div>
           );
         })}
-
-      {!loading && users.length > 0 && (
-        <div className="text-blue-600 hover:underline cursor-pointer text-sm text-right">
-          Ver mais &gt;
-        </div>
-      )}
     </section>
   );
 }

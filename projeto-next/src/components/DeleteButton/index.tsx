@@ -27,6 +27,7 @@ export default function DeleteButton({ id }: DeleteButtonProps) {
         return;
       }
       router.refresh()
+      router.push('/home')
     } catch (error) {
       console.error('Erro ao deletar:', error);
       alert('Erro ao deletar.');
@@ -37,7 +38,7 @@ export default function DeleteButton({ id }: DeleteButtonProps) {
     <button
       type="button"
       onClick={handleDeletar}
-      className="flex items-center px-7 py-7 bg-red-400 text-white rounded-lg hover:bg-red-700 transition"
+      className="flex items-center px-4 py-4 bg-red-400 text-white rounded-lg hover:bg-red-700 transition"
     >
       <FaTrash size={20}/>
     </button>

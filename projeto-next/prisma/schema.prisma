@@ -18,10 +18,10 @@ model User {
   sessions      Session[]
   Authenticator Authenticator[]
 
-  profiles         Profile[] // Relação 1:N com Profile
-  calendarSessions Calendar[] // Relação 1:N com Calendar (sessões do mentor)
+  profiles         Profile[] // sem onDelete aqui
+  calendarSessions Calendar[]
 
-  favorites Favorite[] @relation("UserFavorites") // relação inversa para Favorite.user
+  favorites Favorite[] @relation("UserFavorites")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -34,13 +34,11 @@ model Profile {
   description String
 
   userId String
-  user   User   @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Relações com Calendar (mentores e mentorados)
   mentorSessions    Calendar[] @relation("MentorProfile")
   mentoradoSessions Calendar[] @relation("MentoradoProfile")
 
-  // Relações com Favorite para granularidade
   favoritesGiven    Favorite[] @relation("UserProfileFavorites")
   favoritesReceived Favorite[] @relation("FavoritedProfiles")
 
@@ -111,13 +109,13 @@ model Calendar {
   dateTime    DateTime
   meetingLink String?
 
-  userId      String // Mentor (pegamos da sessão)
-  profileId   String // Perfil do mentor (da sessão)
-  mentoradoId String // ID do perfil do mentorado
+  userId      String
+  profileId   String
+  mentoradoId String
 
-  user      User    @relation(fields: [userId], references: [id])
-  profile   Profile @relation("MentorProfile", fields: [profileId], references: [id])
-  mentorado Profile @relation("MentoradoProfile", fields: [mentoradoId], references: [id])
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile   Profile @relation("MentorProfile", fields: [profileId], references: [id], onDelete: Cascade)
+  mentorado Profile @relation("MentoradoProfile", fields: [mentoradoId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 }
@@ -125,15 +123,15 @@ model Calendar {
 model Favorite {
   id String @id @default(cuid())
 
-  userId        String // Usuário que favoritou
-  userProfileId String // Perfil do usuário que fez o favorito
-  favoriteId    String // Perfil favoritado
+  userId        String
+  userProfileId String
+  favoriteId    String
 
-  user        User    @relation("UserFavorites", fields: [userId], references: [id])
-  userProfile Profile @relation("UserProfileFavorites", fields: [userProfileId], references: [id])
-  favorite    Profile @relation("FavoritedProfiles", fields: [favoriteId], references: [id])
+  user        User    @relation("UserFavorites", fields: [userId], references: [id], onDelete: Cascade)
+  userProfile Profile @relation("UserProfileFavorites", fields: [userProfileId], references: [id], onDelete: Cascade)
+  favorite    Profile @relation("FavoritedProfiles", fields: [favoriteId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
 
-  @@unique([userProfileId, favoriteId]) // evita duplicidade
+  @@unique([userProfileId, favoriteId])
 }

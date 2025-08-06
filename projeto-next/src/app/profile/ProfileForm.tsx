@@ -51,8 +51,6 @@ export default function ProfileForm() {
         alert(data.error || "Erro ao criar perfil.");
         return;
       }
-
-      alert("Perfil criado com sucesso!");
       router.push("/home");
     } catch (err) {
       console.error("Erro ao criar perfil:", err);

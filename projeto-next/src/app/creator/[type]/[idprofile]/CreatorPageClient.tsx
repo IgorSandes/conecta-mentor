@@ -9,6 +9,7 @@ import { Session } from "next-auth";
 import UsersList from "@/components/UsersList";
 import AddedUsersList from "@/components/AddedUsersList";
 import FormSession from "@/components/FormSession";
+import DeleteButton from "@/components/DeleteButton";
 
 type ProfileType = "MENTOR" | "MENTORADO";
 
@@ -32,9 +33,18 @@ function MensagensTeste() {
     </div>
   );
 }
+function MensagensDelete() {
+  return (
+    <div className="p-4 bg-white rounded shadow">
+      <h2>Deletar perfil</h2>
+    </div>
+  );
+}
 
 export default function CreatorPageClient({ profile, sessionUser }: CreatorPageClientProps) {
-  const [activeTab, setActiveTab] = useState<"inicio" | "sessoes" | "mensagem" | "minha-rede">("inicio");
+  const [activeTab, setActiveTab] = useState<
+    "inicio" | "sessoes" | "mensagem" | "minha-rede" | "configuracoes"
+  >("inicio");
   const [showForm, setShowForm] = useState(false);
   const [refreshCalendar, setRefreshCalendar] = useState(0);
 
@@ -45,9 +55,20 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex flex-col md:flex-row flex-1">
-        <aside className="bg-gray-950 text-white p-6 md:w-64 w-full flex md:flex-col flex-row items-center md:items-start justify-between md:justify-start gap-6 md:gap-8">
-          <div className="text-2xl font-bold flex items-center gap-2 whitespace-nowrap">
+      <div className="flex flex-1 flex-col md:flex-row">
+        <aside
+          className="
+            bg-gray-950 text-white p-6 
+            w-full md:w-64
+            flex md:flex-col flex-row 
+            items-center md:items-start 
+            justify-between md:justify-start 
+            gap-6 md:gap-8
+            overflow-x-auto
+            scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900
+            "
+        >
+          <div className="text-2xl font-bold flex items-center gap-2 whitespace-nowrap flex-shrink-0">
             {profile.type === "MENTOR" ? (
               <>
                 MENTOR <FaChalkboardTeacher className="text-blue-600 text-xl" />
@@ -59,45 +80,30 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
             )}
           </div>
 
-          <nav>
-            <ul className="flex md:flex-col gap-6 md:gap-4 text-lg">
-              <li
-                className={`hover: cursor-pointer ${
-                  activeTab === "inicio" ? " font-semibold" : ""
-                }`}
-                onClick={() => setActiveTab("inicio")}
-              >
-                Início
-              </li>
-              <li
-                className={`hover: cursor-pointer ${
-                  activeTab === "minha-rede" ? " font-semibold" : ""
-                }`}
-                onClick={() => setActiveTab("minha-rede")}
-              >
-                Minha Rede
-              </li>
-              <li
-                className={`hover: cursor-pointer ${
-                  activeTab === "sessoes" ? " font-semibold" : ""
-                }`}
-                onClick={() => setActiveTab("sessoes")}
-              >
-                Sessões
-              </li>
-              <li
-                className={`hover: cursor-pointer ${
-                  activeTab === "mensagem" ? " font-semibold" : ""
-                }`}
-                onClick={() => setActiveTab("mensagem")}
-              >
-                Mensagens
-              </li>
+          <nav className="flex md:flex-col flex-row gap-6 md:gap-4 text-lg flex-shrink-0">
+            <ul className="flex md:flex-col flex-row gap-6 md:gap-4">
+              {[
+                { key: "inicio", label: "Início" },
+                { key: "minha-rede", label: "Minha Rede" },
+                { key: "sessoes", label: "Sessões" },
+                { key: "mensagem", label: "Mensagens" },
+                { key: "configuracoes", label: "Configurações" },
+              ].map(({ key, label }) => (
+                <li
+                  key={key}
+                  className={`cursor-pointer whitespace-nowrap ${
+                    activeTab === key ? "font-semibold underline" : ""
+                  }`}
+                  onClick={() => setActiveTab(key as any)}
+                >
+                  {label}
+                </li>
+              ))}
             </ul>
           </nav>
         </aside>
 
-        <main className="flex-1 bg-gray-100 p-6 md:p-8 flex flex-col min-h-screen">
+        <main className="flex-1 bg-gray-100 p-4 sm:p-6 md:p-8 flex flex-col min-h-screen overflow-auto">
           <Header session={sessionUser} />
 
           <div className="flex-1 mt-6">
@@ -112,6 +118,8 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
               <UsersList
                 loggedUserId={sessionUser.user.id}
                 loggedUserProfileId={profile.id}
+                loggedUserProfileType={profile.type}
+                loggedUserProfession={profile.profession}
               />
             )}
 
@@ -152,6 +160,20 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
             )}
 
             {activeTab === "mensagem" && <MensagensTeste />}
+            {activeTab === "configuracoes" && (
+              <div className="bg-white rounded-lg shadow-md p-6 w-full">
+                <h3 className="text-2xl font-bold mb-4 border-b border-gray-300 pb-2">
+                  Configurações do perfil
+                </h3>
+
+                <div className="flex items-center justify-between w-full">
+                  <div className="mr-4 flex-grow">
+                    <MensagensDelete />
+                  </div>
+                  <DeleteButton id={profile.id} />
+                </div>
+              </div>
+            )}
           </div>
         </main>
       </div>

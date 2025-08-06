@@ -5,9 +5,9 @@ import { FaFacebook, FaLinkedin, FaGithub } from "react-icons/fa";
 export default function Footer() {
   return (
     <footer className="bg-black text-white py-6 w-full">
-      <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="container mx-auto max-w-[90rem] px-6 sm:px-8 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6 flex-wrap">
         {/* Informações institucionais */}
-        <div className="text-center md:text-left">
+        <div className="text-center md:text-left flex-1 min-w-[250px]">
           <p className="font-semibold">Projeto Conecta Mentor</p>
           <p className="text-sm text-gray-300">
             Criando pontes entre gerações para transformar o mundo do trabalho.
@@ -26,7 +26,7 @@ export default function Footer() {
         </div>
 
         {/* Redes sociais com ícones */}
-        <div className="flex gap-6 text-3xl">
+        <div className="flex gap-8 text-3xl flex-shrink-0">
           <a
             href="https://www.facebook.com/igor.sandes.77"
             target="_blank"
