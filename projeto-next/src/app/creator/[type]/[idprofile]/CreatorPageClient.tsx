@@ -10,6 +10,8 @@ import UsersList from "@/components/UsersList";
 import AddedUsersList from "@/components/AddedUsersList";
 import FormSession from "@/components/FormSession";
 import DeleteButton from "@/components/DeleteButton";
+import EditDescription from "@/components/EditDescription";
+
 
 import ChatsList from "@/components/ChatsList"; // importe o novo componente
 
@@ -155,16 +157,27 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
             )}
 
             {activeTab === "configuracoes" && (
-              <div className="bg-white rounded-lg shadow-md p-6 w-full">
-                <h3 className="text-2xl font-bold mb-4 border-b border-gray-300 pb-2">
+              <div className="bg-white rounded-lg shadow-md p-6 w-full space-y-6">
+                <h3 className="text-2xl font-bold border-b border-gray-300 pb-2">
                   Configurações do perfil
                 </h3>
 
-                <div className="flex items-center justify-between w-full">
-                  <div className="mr-4 flex-grow">
-                    <MensagensDelete />
+                <div>
+                  <h4 className="text-lg font-semibold mb-2">Editar Descrição</h4>
+                  <EditDescription
+                    profileId={profile.id}
+                    initialDescription={profile.description}
+                  />
+                </div>
+
+                <div className="pt-4 border-t border-gray-300">
+                  <h4 className="text-lg font-semibold mb-2">Deletar Conta</h4>
+                  <div className="flex items-center justify-between w-full">
+                    <div className="mr-4 flex-grow">
+                      <MensagensDelete />
+                    </div>
+                    <DeleteButton id={profile.id} />
                   </div>
-                  <DeleteButton id={profile.id} />
                 </div>
               </div>
             )}
