@@ -38,7 +38,13 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
     setRefreshCalendar((v) => v + 1);
     setShowForm(false);
   }
-
+  function MensagensDelete() {
+    return (
+      <div className="p-4 bg-white rounded shadow">
+        <h2>Deletar perfil</h2>
+      </div>
+    );
+  }
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex flex-1 flex-col md:flex-row">
@@ -77,9 +83,8 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
               ].map(({ key, label }) => (
                 <li
                   key={key}
-                  className={`cursor-pointer whitespace-nowrap ${
-                    activeTab === key ? "font-semibold" : ""
-                  }`}
+                  className={`cursor-pointer whitespace-nowrap ${activeTab === key ? "font-semibold" : ""
+                    }`}
                   onClick={() => setActiveTab(key as any)}
                 >
                   {label}
@@ -157,7 +162,7 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
 
                 <div className="flex items-center justify-between w-full">
                   <div className="mr-4 flex-grow">
-                    {/* componente para deletar perfil */}
+                    <MensagensDelete />
                   </div>
                   <DeleteButton id={profile.id} />
                 </div>
