@@ -9,6 +9,8 @@ A **Plataforma de Mentoria** é uma aplicação web que conecta pessoas com expe
 - Listagem de perfis disponíveis para conexão
 - Sistema escalável de perfis (um usuário pode ter múltiplos papéis)
 - Interface moderna e responsiva
+- Criação de sessões
+- Chat em tempo real
 
 ## 💠 Tecnologias Utilizadas
 
@@ -81,8 +83,8 @@ npm run dev
 
 ## 📌 Implementações Futuras
 
-- Implementação de chat.
-- Criação de sessões com integração a plataformas de streaming como Microsoft Teams, Google Meet, entre outras.
+- Implementação de uma lista de chats.
+- Criação de um PDI (Plano de Desenvolvimento Individual), no qual o mentor e o mentorado seguirão uma trilha até a conclusão da mentoria.
 
 Feito por [Igor Sandes Brun](https://github.com/igorsandes)
 
