@@ -1,7 +1,21 @@
 'use client';
 
 import { FaPlus, FaCommentDots } from 'react-icons/fa';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
+
+import {
+  collection,
+  addDoc,
+  onSnapshot,
+  orderBy,
+  query,
+  Timestamp,
+  doc,
+  updateDoc,
+  arrayUnion,
+  getDocs,
+} from 'firebase/firestore';
+import { db } from '../../lib/firebase'; // ajuste o caminho conforme seu projeto
 
 type ProfileType = 'MENTOR' | 'MENTORADO';
 
@@ -25,7 +39,7 @@ interface UsersListProps {
   loggedUserId: string;
   loggedUserProfileId: string;
   loggedUserProfileType: ProfileType;
-  loggedUserProfession: string; // <- Pegamos a profissão do perfil logado
+  loggedUserProfession: string;
 }
 
 type Favorite = {
@@ -39,6 +53,140 @@ type Favorite = {
   };
 };
 
+function getChatId(profileId1: string, profileId2: string) {
+  return [profileId1, profileId2].sort().join('_');
+}
+
+async function markMessagesAsRead(chatId: string, loggedProfileId: string) {
+  const messagesRef = collection(db, 'chats', chatId, 'messages');
+
+  // Pega todas mensagens do chat
+  const snapshot = await getDocs(messagesRef);
+
+  const batchUpdates = snapshot.docs
+    .filter((docSnap) => {
+      const data = docSnap.data();
+      const readBy: string[] = data.readBy || [];
+      return !readBy.includes(loggedProfileId);
+    })
+    .map((docSnap) =>
+      updateDoc(doc(db, 'chats', chatId, 'messages', docSnap.id), {
+        readBy: arrayUnion(loggedProfileId),
+      })
+    );
+
+  await Promise.all(batchUpdates);
+}
+
+function Chat({
+  loggedProfileId,
+  otherProfileId,
+  onClose,
+}: {
+  loggedProfileId: string;
+  otherProfileId: string;
+  onClose: () => void;
+}) {
+  const chatId = getChatId(loggedProfileId, otherProfileId);
+  const [messages, setMessages] = useState<
+    { id: string; text: string; senderProfileId: string; createdAt: any }[]
+  >([]);
+  const [input, setInput] = useState('');
+
+  useEffect(() => {
+    const q = query(
+      collection(db, 'chats', chatId, 'messages'),
+      orderBy('createdAt')
+    );
+
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const msgs = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          text: data.text || '',
+          senderProfileId: data.senderProfileId || '',
+          createdAt: data.createdAt || null,
+        };
+      });
+      setMessages(msgs);
+
+      // Marca mensagens como lidas
+      markMessagesAsRead(chatId, loggedProfileId).catch(console.error);
+    });
+
+    return () => unsubscribe();
+  }, [chatId, loggedProfileId]);
+
+  async function sendMessage() {
+    if (!input.trim()) return;
+
+    await addDoc(collection(db, 'chats', chatId, 'messages'), {
+      text: input.trim(),
+      senderProfileId: loggedProfileId,
+      createdAt: Timestamp.now(),
+      readBy: [], // ninguém leu ainda
+    });
+
+    setInput('');
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div className="bg-white bg-opacity-90 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold">Chat</h3>
+          <button
+            onClick={onClose}
+            className="text-gray-600 hover:text-gray-900 font-bold"
+            aria-label="Fechar chat"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div className="flex-grow overflow-y-auto border p-2 mb-4 rounded">
+          {messages.length === 0 && (
+            <p className="text-gray-500 text-sm">Nenhuma mensagem ainda.</p>
+          )}
+          {messages.map((msg) => (
+            <div
+              key={msg.id}
+              className={`mb-2 p-2 rounded ${
+                msg.senderProfileId === loggedProfileId
+                  ? 'bg-blue-200 self-end'
+                  : 'bg-gray-200 self-start'
+              } max-w-[80%]`}
+            >
+              <p>{msg.text}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Digite sua mensagem..."
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="flex-grow border border-gray-300 rounded px-3 py-1"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') sendMessage();
+            }}
+          />
+          <button
+            onClick={sendMessage}
+            className="bg-blue-600 text-white px-4 rounded disabled:opacity-50"
+            disabled={!input.trim()}
+          >
+            Enviar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function UsersList({
   loggedUserId,
   loggedUserProfileId,
@@ -50,6 +198,8 @@ export default function UsersList({
   const [search, setSearch] = useState('');
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const [addingFavoriteId, setAddingFavoriteId] = useState<string | null>(null);
+  const [chatWithProfileId, setChatWithProfileId] = useState<string | null>(null);
+  const [unreadCounts, setUnreadCounts] = useState<Record<string, number>>({});
 
   async function listUsers() {
     try {
@@ -98,6 +248,66 @@ export default function UsersList({
     }
   }
 
+  // Função para escutar mensagens não lidas por perfil e atualizar contador
+  const listenUnreadMessages = useCallback(() => {
+    if (!loggedUserProfileId) return;
+
+    // Para cada perfil da lista, vamos ouvir as mensagens
+    // Na prática, vamos ouvir as mensagens onde loggedUserProfileId não está em readBy
+
+    // Isso é custoso, então vamos simplificar: vamos escutar todos chats onde loggedUserProfileId participa
+
+    // Aqui vamos escutar mensagens de todos chats que envolvem o perfil logado e atualizar contador para cada outro perfil
+
+    const unsubscribeList: (() => void)[] = [];
+
+    users.forEach((user) => {
+      user.profiles.forEach((profile) => {
+        // Ignorar próprio perfil e só perfis opostos
+        if (profile.id === loggedUserProfileId) return;
+        if (
+          loggedUserProfileType === 'MENTOR' &&
+          profile.type !== 'MENTORADO'
+        )
+          return;
+        if (
+          loggedUserProfileType === 'MENTORADO' &&
+          profile.type !== 'MENTOR'
+        )
+          return;
+
+        if (profile.profession !== loggedUserProfession) return;
+
+        const chatId = getChatId(loggedUserProfileId, profile.id);
+        const q = query(
+          collection(db, 'chats', chatId, 'messages'),
+          orderBy('createdAt')
+        );
+
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+          // Contar mensagens que não contém loggedUserProfileId em readBy
+          const unreadCount = snapshot.docs.reduce((count, docSnap) => {
+            const data = docSnap.data();
+            const readBy: string[] = data.readBy || [];
+            if (!readBy.includes(loggedUserProfileId)) return count + 1;
+            return count;
+          }, 0);
+
+          setUnreadCounts((prev) => ({
+            ...prev,
+            [profile.id]: unreadCount,
+          }));
+        });
+
+        unsubscribeList.push(unsubscribe);
+      });
+    });
+
+    return () => {
+      unsubscribeList.forEach((unsub) => unsub());
+    };
+  }, [loggedUserProfileId, loggedUserProfileType, loggedUserProfession, users]);
+
   useEffect(() => {
     listUsers();
   }, []);
@@ -106,15 +316,17 @@ export default function UsersList({
     listFavorites();
   }, [loggedUserProfileId]);
 
+  useEffect(() => {
+    const unsub = listenUnreadMessages();
+    return () => unsub && unsub();
+  }, [listenUnreadMessages]);
+
   const normalizedSearch = search.toLowerCase();
 
   const filteredProfiles: Profile[] = users.flatMap((user) =>
     user.profiles
       .filter((profile) => {
-        // Não listar o próprio usuário
         if (user.id === loggedUserId) return false;
-
-        // Listar apenas perfis do tipo oposto
         if (
           loggedUserProfileType === 'MENTOR' &&
           profile.type !== 'MENTORADO'
@@ -126,10 +338,8 @@ export default function UsersList({
         )
           return false;
 
-        // Filtro por profissão (automático)
         if (profile.profession !== loggedUserProfession) return false;
 
-        // Filtro de busca (texto)
         const name = user.name?.toLowerCase() || '';
         return (
           name.includes(normalizedSearch) ||
@@ -191,13 +401,11 @@ export default function UsersList({
   }
 
   return (
-    <section className="bg-white rounded-xl shadow-md p-6">
+    <section className="bg-white rounded-xl shadow-md p-6 relative">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-xl font-semibold text-gray-800">
           Lista de {loggedUserProfileType === 'MENTOR' ? 'Mentorados' : 'Mentores'} em
-          <span className="text-blue-600 ml-1">
-            {capitalize(loggedUserProfession)}
-          </span>
+          <span className="text-blue-600 ml-1">{capitalize(loggedUserProfession)}</span>
         </h2>
 
         <input
@@ -221,6 +429,8 @@ export default function UsersList({
             (fav) => fav.profile.id === profile.id
           );
 
+          const unread = unreadCounts[profile.id] || 0;
+
           return (
             <div
               key={profile.id}
@@ -234,7 +444,7 @@ export default function UsersList({
                 <div className="text-gray-500 text-sm">{profile.description}</div>
               </div>
 
-              <div className="flex gap-3 text-gray-600">
+              <div className="flex gap-3 text-gray-600 items-center">
                 <button
                   title="Adicionar"
                   className="hover:text-blue-600 transition disabled:opacity-50"
@@ -243,13 +453,31 @@ export default function UsersList({
                 >
                   <FaPlus />
                 </button>
-                <button title="Mensagem" className="hover:text-purple-600 transition">
+
+                <button
+                  title="Mensagem"
+                  className="relative hover:text-purple-600 transition"
+                  onClick={() => setChatWithProfileId(profile.id)}
+                >
                   <FaCommentDots />
+                  {unread > 0 && (
+                    <span className="absolute -top-3 -right-4 bg-blue-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {unread}
+                    </span>
+                  )}
                 </button>
               </div>
             </div>
           );
         })}
+
+      {chatWithProfileId && (
+        <Chat
+          loggedProfileId={loggedUserProfileId}
+          otherProfileId={chatWithProfileId}
+          onClose={() => setChatWithProfileId(null)}
+        />
+      )}
     </section>
   );
 }

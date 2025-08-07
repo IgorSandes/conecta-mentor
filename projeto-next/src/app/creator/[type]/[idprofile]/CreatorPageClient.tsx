@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import { useState } from "react";
 import { FaChalkboardTeacher, FaUserGraduate } from "react-icons/fa";
@@ -10,6 +10,8 @@ import UsersList from "@/components/UsersList";
 import AddedUsersList from "@/components/AddedUsersList";
 import FormSession from "@/components/FormSession";
 import DeleteButton from "@/components/DeleteButton";
+
+import ChatsList from "@/components/ChatsList"; // importe o novo componente
 
 type ProfileType = "MENTOR" | "MENTORADO";
 
@@ -23,22 +25,6 @@ interface Profile {
 interface CreatorPageClientProps {
   profile: Profile;
   sessionUser: Session;
-}
-
-function MensagensTeste() {
-  return (
-    <div className="p-4 bg-white rounded shadow">
-      <h3 className="text-xl font-semibold mb-2">Mensagens (em desenvolvimento)</h3>
-      <p>Este componente ainda não está pronto.</p>
-    </div>
-  );
-}
-function MensagensDelete() {
-  return (
-    <div className="p-4 bg-white rounded shadow">
-      <h2>Deletar perfil</h2>
-    </div>
-  );
 }
 
 export default function CreatorPageClient({ profile, sessionUser }: CreatorPageClientProps) {
@@ -92,7 +78,7 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
                 <li
                   key={key}
                   className={`cursor-pointer whitespace-nowrap ${
-                    activeTab === key ? "font-semibold underline" : ""
+                    activeTab === key ? "font-semibold" : ""
                   }`}
                   onClick={() => setActiveTab(key as any)}
                 >
@@ -159,7 +145,10 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
               </>
             )}
 
-            {activeTab === "mensagem" && <MensagensTeste />}
+            {activeTab === "mensagem" && (
+              <ChatsList loggedUserProfileId={profile.id} />
+            )}
+
             {activeTab === "configuracoes" && (
               <div className="bg-white rounded-lg shadow-md p-6 w-full">
                 <h3 className="text-2xl font-bold mb-4 border-b border-gray-300 pb-2">
@@ -168,7 +157,7 @@ export default function CreatorPageClient({ profile, sessionUser }: CreatorPageC
 
                 <div className="flex items-center justify-between w-full">
                   <div className="mr-4 flex-grow">
-                    <MensagensDelete />
+                    {/* componente para deletar perfil */}
                   </div>
                   <DeleteButton id={profile.id} />
                 </div>
