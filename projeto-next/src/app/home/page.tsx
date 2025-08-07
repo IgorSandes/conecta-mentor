@@ -50,7 +50,7 @@ export default async function Home() {
             <>
               {mentors.length > 0 && (
                 <section className="mb-6">
-                  <h2 className="text-xl font-semibold mb-3 text-blue-700">Mentores</h2>
+                  <h2 className="text-xl font-semibold mb-3 text-blue-700">Perfis Mentor</h2>
                   <ul className="space-y-3">
                     {mentors.map((profile) => (
                       <li key={profile.id}>
@@ -71,7 +71,7 @@ export default async function Home() {
 
               {mentees.length > 0 && (
                 <section>
-                  <h2 className="text-xl font-semibold mb-3 text-purple-700">Mentorados</h2>
+                  <h2 className="text-xl font-semibold mb-3 text-purple-700">Perfis Mentorado</h2>
                   <ul className="space-y-3">
                     {mentees.map((profile) => (
                       <li key={profile.id}>

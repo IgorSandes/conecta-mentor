@@ -1,6 +1,6 @@
 'use client';
 
-import { FaCommentDots, FaTrash } from 'react-icons/fa';
+import { FaCommentDots, FaMinus } from 'react-icons/fa';
 import { useEffect, useState, useCallback } from 'react';
 
 import {
@@ -113,8 +113,8 @@ function Chat({
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-20 backdrop-blur-sm flex justify-center items-center z-50 p-4">
-      <div className="bg-white bg-opacity-90 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col p-4">
+    <div className="fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50 p-4">
+      <div className="bg-indigo-100 bg-opacity-90 rounded-lg w-full max-w-md max-h-[80vh] flex flex-col p-4">
         <div className="flex justify-between items-center mb-4">
           <h3 className="font-bold">Chat</h3>
           <button
@@ -133,13 +133,23 @@ function Chat({
           {messages.map((msg) => (
             <div
               key={msg.id}
-              className={`mb-2 p-2 rounded ${
-                msg.senderProfileId === loggedProfileId
-                  ? 'bg-blue-200 self-end'
-                  : 'bg-gray-200 self-start'
-              } max-w-[80%]`}
+              className={`mb-4 flex flex-col ${msg.senderProfileId === loggedProfileId ? 'items-end' : 'items-start'
+                }`}
             >
-              <p>{msg.text}</p>
+              {/* Nome ou descrição do remetente */}
+              <span className="text-xs text-gray-600 mb-1">
+                {msg.senderProfileId === loggedProfileId ? 'Você (Mentor)' : 'Mentorado'}
+              </span>
+
+              {/* Caixa da mensagem */}
+              <div
+                className={`p-2 rounded max-w-[80%] ${msg.senderProfileId === loggedProfileId
+                    ? 'bg-blue-300 text-right'
+                    : 'bg-gray-300 text-left'
+                  }`}
+              >
+                <p>{msg.text}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -312,7 +322,7 @@ export default function AddedUsersList({ loggedUserProfileId, loggedUserId }: Ad
             >
               <div>
                 <strong className="text-gray-900">
-                  {(userName || 'Usuário sem nome')} - {(profile?.type || 'Tipo não informado')}
+                  {(userName || 'Usuário sem nome')}
                 </strong>
                 <p className="text-gray-600 text-sm">{profile?.profession || 'Profissão não informada'}</p>
                 <div className="text-gray-500 text-sm">{profile?.description || 'Sem descrição.'}</div>
@@ -325,7 +335,7 @@ export default function AddedUsersList({ loggedUserProfileId, loggedUserId }: Ad
                   onClick={() => handleRemoveFavorite(id)}
                   disabled={removingId === id}
                 >
-                  <FaTrash />
+                  <FaMinus />
                 </button>
                 <button
                   title="Mensagem"
